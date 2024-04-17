@@ -19,14 +19,14 @@ public abstract class ProductionManager
                 return;
             }
 
-            Console.WriteLine($"Starting production of {quantity} {spaceship}(s).");
+            Logger.PrintInstruction("PRODUCING", $"{quantity} {spaceship}(s)");
 
             if (InventoryManager.CheckStock("Hull_HS1", quantity) &&
                 InventoryManager.CheckStock("Engine_ES1", quantity) &&
                 InventoryManager.CheckStock("Wings_WS1", quantity) &&
                 InventoryManager.CheckStock("Thruster_TS1", quantity * 2))
             {
-                Console.WriteLine($"Production completed for {quantity} {spaceship}(s). Stock updated.");
+                Logger.PrintResult($"Production completed for {quantity} {spaceship}(s). Stock updated.");
             }
             else
             {
