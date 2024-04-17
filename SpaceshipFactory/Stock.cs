@@ -57,6 +57,27 @@ public class Stock
 
     public override string ToString()
     {
-        return base.ToString();
+        string str = "";
+        foreach (var kv in _spaceships)
+        {
+            str += $"{kv.Value} {kv.Key}\n";
+        }
+        foreach (var kv in _engines)
+        {
+            str += $"{kv.Value} {kv.Key}\n";
+        }
+        foreach (var kv in _hulls)
+        {
+            str += $"{kv.Value} {kv.Key}\n";
+        }
+        foreach (var kv in _thrusters)
+        {
+            str += $"{kv.Value} {kv.Value}\n";
+        }
+        foreach (var kv in _wings)
+        {
+            str += $"{kv.Value} {kv.Key}\n";
+        }
+        return str;
     }
 }
