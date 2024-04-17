@@ -19,6 +19,7 @@ public static class Parser
             case "VERIFY":
                 break;
             case "PRODUCE":
+                ProductionManager.Produce(args);
                 break;
             case "":
                 break;
