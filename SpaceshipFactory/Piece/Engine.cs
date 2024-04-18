@@ -2,10 +2,15 @@ namespace SpaceshipFactory.Piece;
 
 public class Engine
 {
-    public string Name;
+    private readonly string _name;
 
     public Engine(string name)
     {
-        Name = name;
+        _name = name;
+    }
+
+    public override string ToString()
+    {
+        return _name;
     }
 }

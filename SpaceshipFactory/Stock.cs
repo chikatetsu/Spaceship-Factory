@@ -30,7 +30,6 @@ public static class Stock
         { new Wings("Wings_WC1"), 24 },
     };
 
-
     public static void Add(Spaceship spaceship, uint quantity)
     {
         if (Spaceships.ContainsKey(spaceship))
@@ -109,7 +108,7 @@ public static class Stock
             {
                 continue;
             }
-            str += $"{kv.Value} {kv.Value}\n";
+            str += $"{kv.Value} {kv.Key}\n";
         }
         foreach (var kv in Wings)
         {
