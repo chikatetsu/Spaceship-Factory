@@ -16,7 +16,7 @@ public static class Parser
                     Logger.PrintError("The command STOCKS does not take arguments");
                     break;
                 }
-                Logger.PrintResult("stock result here");
+                Logger.PrintResult(Stock.GetStocks());
                 break;
             case "NEEDED_STOCKS":
                 break;
