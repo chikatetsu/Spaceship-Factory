@@ -11,6 +11,12 @@ public static class Parser
         switch (command)
         {
             case "STOCKS":
+                if (args.Length > 0)
+                {
+                    Logger.PrintError("The command STOCKS does not take arguments");
+                    break;
+                }
+                Logger.PrintResult(Stock.GetStocks());
                 break;
             case "NEEDED_STOCKS":
                 break;
