@@ -4,7 +4,7 @@ namespace SpaceshipFactory
 {
     public static class ProductionManager
     {
-        private static readonly Dictionary<string, Spaceship> ShipModels = new()
+        public static readonly Dictionary<string, Spaceship> ShipModels = new()
         {
             {"Explorer", new Spaceship("Explorer", new Hull("Hull_HS1"), new Engine("Engine_EE1"), new Wings("Wings_WE1"), new Thruster("Thruster_TE1"))},
             {"Speeder", new Spaceship("Speeder", new Hull("Hull_HS1"), new Engine("Engine_ES1"), new Wings("Wings_WS1"), new Thruster("Thruster_TS1"))},
@@ -44,11 +44,18 @@ namespace SpaceshipFactory
         // TODO: Implement the rest of the commands (3.4 Édition des instructions d’assemblage)
         private static void Assemble(string spaceship, int quantity)
         {
-            for (int i = 0; i < quantity; i++)
+            if (Stock.Verify(spaceship, quantity))
             {
-                Logger.PrintInstruction("PRODUCING", $"1 {ShipModels[spaceship]}");
-                Logger.PrintInstruction("GET_OUT_STOCK", $"1 {ShipModels[spaceship]}");
-                Logger.PrintResult($"FINISHED {spaceship}");
+                for (int i = 0; i < quantity; i++)
+                {
+                    Logger.PrintInstruction("PRODUCING", $"1 {ShipModels[spaceship]}");
+                    Logger.PrintInstruction("GET_OUT_STOCK", $"1 {ShipModels[spaceship]}");
+                    Logger.PrintResult($"FINISHED {spaceship}");
+                }
+            }
+            else
+            {
+                Logger.PrintError("Unable to start production due to insufficient stock.");
             }
         }
     }

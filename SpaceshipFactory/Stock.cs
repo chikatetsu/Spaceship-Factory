@@ -120,4 +120,11 @@ public static class Stock
         }
         return str;
     }
+
+    public static bool Verify(string spaceshipModel, int quantity)
+    {
+        return false;
+    }
+   
 }
+
