@@ -1,3 +1,5 @@
+using SpaceshipFactory.Piece;
+
 namespace SpaceshipFactory;
 
 public class Parser
@@ -23,7 +25,10 @@ public class Parser
                 if (IsInstructionsCommandValid(args)) { }
                 break;
             case "VERIFY":
-                if (IsVerifyCommandValid(args.Length)) { }
+                if (IsVerifyCommandValid(args.Length))
+                {
+                    VerifyCommand(args);
+                }
                 break;
             case "PRODUCE":
                 if (IsProduceCommandValid(args))
@@ -42,6 +47,7 @@ public class Parser
 
     private string[] FormatInput(string input)
     {
+        input = input.Trim().Replace("  ", " ");
         if (!input.StartsWith(","))
         {
             input = input.Replace(",", "");
@@ -49,6 +55,65 @@ public class Parser
         string[] split = input.Split(" ");
         split[0] = split[0].ToUpper();
         return split;
+    }
+
+
+    private void VerifyCommand(string[] args)
+    {
+        string command = args[0].ToUpper();
+        args = args[1..];
+        bool isAvailable = false;
+
+        switch (command)
+        {
+            case "STOCKS":
+                if (IsStocksCommandValid(args.Length))
+                {
+                    Logger.PrintResult("AVAILABLE");
+                }
+                break;
+            case "NEEDED_STOCKS":
+                if (IsNeededStocksCommandValid(args))
+                {
+                    Logger.PrintResult("AVAILABLE");
+                }
+                break;
+            case "INSTRUCTIONS":
+                if (IsInstructionsCommandValid(args))
+                {
+                    Logger.PrintResult("AVAILABLE");
+                }
+                break;
+            case "VERIFY":
+                if (IsVerifyCommandValid(args.Length))
+                {
+                    VerifyCommand(args);
+                }
+                break;
+            case "PRODUCE":
+                if (IsProduceCommandValid(args))
+                {
+                    for (int i = 0; i < args.Length; i += 2)
+                    {
+                        if (!int.TryParse(args[i], out int quantity) || quantity < 1)
+                        {
+                            continue;
+                        }
+                        Spaceship spaceship = new Spaceship(args[i + 1]);
+
+                        if (!Stock.Verify(spaceship, quantity))
+                        {
+                            Logger.PrintResult("UNAVAILABLE");
+                            return;
+                        }
+                    }
+                    Logger.PrintResult("AVAILABLE");
+                }
+                break;
+            default:
+                Logger.PrintError($"`{command}` is not a known command");
+                break;
+        }
     }
 
 
@@ -144,12 +209,4 @@ public class Parser
         }
         return true;
     }
-
-    //Si la commande est incorrecte, le résultat sera affiché sous la forme :
-    // ERROR Message
-    // Où Message indique pourquoi la commande est incorrecte
-    // Si la commande est valide et que le stock est suffisant, le résultat sera :
-    // AVAILABLE
-    // Si la commande est valide mais que le stock n’est pas suffisant, le résultat sera :
-    // UNAVAILABLE
 }
