@@ -1,16 +1,8 @@
 namespace SpaceshipFactory.Piece;
 
-public class Engine
+public class Engine : Piece
 {
-    private readonly string _name;
-
-    public Engine(string name)
+    public Engine(string name) : base(name)
     {
-        _name = name;
-    }
-
-    public override string ToString()
-    {
-        return _name;
     }
 }
