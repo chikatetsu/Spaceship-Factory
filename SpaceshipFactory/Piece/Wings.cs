@@ -1,16 +1,8 @@
 namespace SpaceshipFactory.Piece;
 
-public class Wings
+public class Wings : Piece
 {
-    private readonly string _name;
-
-    public Wings(string name)
+    public Wings(string name) : base(name)
     {
-        _name = name;
-    }
-
-    public override string ToString()
-    {
-        return _name;
     }
 }

@@ -1,16 +1,8 @@
 namespace SpaceshipFactory.Piece;
 
-public class Hull
+public class Hull : Piece
 {
-    private readonly string _name;
-
-    public Hull(string name)
+    public Hull(string name) : base(name)
     {
-        _name = name;
-    }
-
-    public override string ToString()
-    {
-        return _name;
     }
 }

@@ -1,16 +1,8 @@
 namespace SpaceshipFactory.Piece;
 
-public class Thruster
+public class Thruster : Piece
 {
-    private readonly string _name;
-
-    public Thruster(string name)
+    public Thruster(string name) : base(name)
     {
-        _name = name;
-    }
-
-    public override string ToString()
-    {
-        return _name;
     }
 }

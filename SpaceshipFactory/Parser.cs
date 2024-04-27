@@ -25,6 +25,12 @@ public static class Parser
             case "VERIFY":
                 break;
             case "PRODUCE":
+                if (args.Length < 2)
+                {
+                    Logger.PrintError("PRODUCE command expects at least 2 arguments");
+                    break;
+                }
+                ProductionManager.Produce(args);
                 break;
             case "":
                 break;
