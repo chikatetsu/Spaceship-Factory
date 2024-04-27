@@ -14,12 +14,6 @@ public static class ProductionManager
 
     public static void Produce(string[] args)
     {
-        if (args.Length % 2 != 0)
-        {
-            Logger.PrintError("Arguments must be in pairs of quantity and spaceship model.");
-            return;
-        }
-
         ShipModels[0]?.AddPiece(new Hull("Hull_HE1"), 1);
         ShipModels[0]?.AddPiece(new Engine("Engine_EE1"), 1);
         ShipModels[0]?.AddPiece(new Wings("Wings_WE1"), 1);
@@ -42,7 +36,6 @@ public static class ProductionManager
 
             if (!int.TryParse(quantityArg, out int quantity) || quantity < 1)
             {
-                Logger.PrintError($"Invalid quantity '{quantityArg}'. Expected a positive integer.");
                 continue;
             }
 
