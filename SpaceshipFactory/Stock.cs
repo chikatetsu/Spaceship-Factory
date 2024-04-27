@@ -5,7 +5,7 @@ namespace SpaceshipFactory;
 public static class Stock
 {
     private static readonly Dictionary<Spaceship, uint> Spaceships = new();
-    private static readonly Dictionary<Piece.Piece, uint> Pieces = new()
+    private static readonly Dictionary<Piece.Piece?, uint> Pieces = new()
     {
         { new Engine("Engine_EE1"), 5 },
         { new Engine("Engine_ES1"), 9 },
@@ -26,23 +26,35 @@ public static class Stock
         if (Spaceships.ContainsKey(spaceship))
         {
             Spaceships[spaceship] += quantity;
+            return;
         }
         Spaceships.Add(spaceship, quantity);
     }
     
-    public static void Remove(Piece.Piece piece, uint quantity)
+    public static Piece.Piece? Remove(Piece.Piece? piece, uint quantity)
     {
-        if (Pieces.ContainsKey(piece))
+        if (!Pieces.ContainsKey(piece))
         {
-            Pieces[piece] -= quantity;
+            Logger.PrintError($"Piece {piece} is not in stock.");
+            return null;
         }
+        if (Pieces[piece] < quantity)
+        {
+            Logger.PrintError($"Not enough {piece} in stock.");
+            return null;
+        }
+        
+        Logger.PrintInstruction("GET_OUT_STOCK", $"{quantity} {piece}");
+        Pieces[piece] -= quantity;
+        return piece;
     }
 
-    public static void Add(Piece.Piece piece, uint quantity)
+    public static void Add(Piece.Piece? piece, uint quantity)
     {
         if (Pieces.ContainsKey(piece))
         {
             Pieces[piece] += quantity;
+            return;
         }
         Pieces.Add(piece, quantity);
     }
@@ -69,7 +81,7 @@ public static class Stock
         return str;
     }
 
-    public static bool Verify(string spaceshipModel, int quantity)
+    public static bool Verify(Spaceship spaceshipModel, int quantity)
     {
         return true;
     }

@@ -4,12 +4,14 @@ namespace SpaceshipFactory
 {
     public static class ProductionManager
     {
-        public static readonly Dictionary<string, Spaceship> ShipModels = new()
+
+        public static readonly List<Spaceship?> ShipModels = new()
         {
-            {"Explorer", new Spaceship("Explorer", new Hull("Hull_HS1"), new Engine("Engine_EE1"), new Wings("Wings_WE1"), new Thruster("Thruster_TE1"))},
-            {"Speeder", new Spaceship("Speeder", new Hull("Hull_HS1"), new Engine("Engine_ES1"), new Wings("Wings_WS1"), new Thruster("Thruster_TS1"))},
-            {"Cargo", new Spaceship("Cargo", new Hull("Hull_HC1"), new Engine("Engine_EC1"), new Wings("Wings_WC1"), new Thruster("Thruster_TC1"))}
+            new Spaceship("Explorer"),
+            new Spaceship("Speeder"),
+            new Spaceship("Cargo")
         };
+
 
         public static void Produce(string[] args)
         {
@@ -18,6 +20,21 @@ namespace SpaceshipFactory
                 Logger.PrintError("Arguments must be in pairs of quantity and spaceship model.");
                 return;
             }
+            
+            ShipModels[0]?.AddPiece(new Hull("Hull_HE1"), 1);
+            ShipModels[0]?.AddPiece(new Engine("Engine_EE1"), 1);
+            ShipModels[0]?.AddPiece(new Wings("Wings_WE1"), 1);
+            ShipModels[0]?.AddPiece(new Thruster("Thruster_TE1"), 1);
+            
+            ShipModels[1]?.AddPiece(new Hull("Hull_HS1"), 1);
+            ShipModels[1]?.AddPiece(new Engine("Engine_ES1"), 1);
+            ShipModels[1]?.AddPiece(new Wings("Wings_WS1"), 1);
+            ShipModels[1]?.AddPiece(new Thruster("Thruster_TS1"), 2);
+            
+            ShipModels[2]?.AddPiece(new Hull("Hull_HC1"), 1);
+            ShipModels[2]?.AddPiece(new Engine("Engine_EC1"), 1);
+            ShipModels[2]?.AddPiece(new Wings("Wings_WC1"), 1);
+            ShipModels[2]?.AddPiece(new Thruster("Thruster_TC1"), 1);
             
             for (int i = 0; i < args.Length; i += 2)
             {
@@ -29,28 +46,60 @@ namespace SpaceshipFactory
                     Logger.PrintError($"Invalid quantity '{quantityArg}'. Expected a positive integer.");
                     continue;
                 }
+                
+                Spaceship? spaceship = ShipModels.Find(spaceship => spaceship._name == modelArg);
 
-                if (!ShipModels.ContainsKey(modelArg))
+                if (spaceship == null)
                 {
                     Logger.PrintError($"Spaceship model '{modelArg}' is not available.");
                     continue;
                 }
+                
+                
 
-                Assemble(modelArg, quantity);
+                Assemble(spaceship, quantity);
             }
         }
 
 
-        // TODO: Implement the rest of the commands (3.4 Édition des instructions d’assemblage)
-        private static void Assemble(string spaceship, int quantity)
+        private static void Assemble(Spaceship spaceship, int quantity)
         {
             if (Stock.Verify(spaceship, quantity))
             {
                 for (int i = 0; i < quantity; i++)
                 {
-                    Logger.PrintInstruction("PRODUCING", $"1 {ShipModels[spaceship]}");
-                    Logger.PrintInstruction("GET_OUT_STOCK", $"1 {ShipModels[spaceship]}");
-                    Logger.PrintResult($"FINISHED {spaceship}");
+                    Logger.PrintInstruction("PRODUCING", $"{spaceship._name}");
+                    Dictionary<Piece.Piece, uint> piecesFromStock = new();
+
+                    foreach (var piece in spaceship._pieces)
+                    {
+                        Piece.Piece? pieceFromStock = Stock.Remove(piece.Key, piece.Value);
+                        if (pieceFromStock == null)
+                        {
+                            foreach (var pieceQty in piecesFromStock)
+                            {
+                                Stock.Add(pieceQty.Key, pieceQty.Value);
+                            }
+
+                            return;
+                        }
+
+                        if (piecesFromStock.ContainsKey(pieceFromStock))
+                        {
+                            piecesFromStock[pieceFromStock]+= piece.Value;
+                        }
+                        else
+                        {
+                            piecesFromStock.Add(pieceFromStock, piece.Value);
+                        }
+                    }
+
+                    foreach (var PieceFromStock in piecesFromStock)
+                    {
+                        Logger.PrintInstruction("ASSEMBLE", $"{PieceFromStock.Key._name}");
+                    }
+                    
+                    Logger.PrintResult($"FINISHED {spaceship._name}");
                 }
             }
             else

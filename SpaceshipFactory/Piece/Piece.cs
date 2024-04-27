@@ -2,7 +2,7 @@ namespace SpaceshipFactory.Piece;
 
 public class Piece
 {
-    private readonly string _name;
+    public readonly string _name;
 
     public Piece(string name)
     {
@@ -12,5 +12,20 @@ public class Piece
     public override string ToString()
     {
         return _name;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is Piece piece)
+        {
+            return _name == piece._name;
+        }
+        
+        return false;
+    }
+    
+    public override int GetHashCode()
+    {
+        return _name.GetHashCode();
     }
 }
