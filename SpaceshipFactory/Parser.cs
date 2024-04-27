@@ -4,7 +4,7 @@ public class Parser
 {
     public void Parse(string input)
     {
-        string[] split = input.Split(" ");
+        string[] split = FormatInput(input);
         string command = split[0];
         string[] args = split[1..];
 
@@ -37,6 +37,18 @@ public class Parser
                 Logger.PrintError($"`{command}` is not a known command");
                 break;
         }
+    }
+
+
+    private string[] FormatInput(string input)
+    {
+        if (!input.StartsWith(","))
+        {
+            input = input.Replace(",", "");
+        }
+        string[] split = input.Split(" ");
+        split[0] = split[0].ToUpper();
+        return split;
     }
 
 
