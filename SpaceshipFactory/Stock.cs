@@ -21,20 +21,32 @@ public static class Stock
         { new Wings("Wings_WC1"), 24 },
     };
 
-    public static void Add(Spaceship spaceship, uint quantity)
+    public static bool Add(Spaceship spaceship, uint quantity)
     {
+        if (quantity == 0)
+        {
+            return false;
+        }
         if (!Spaceships.TryAdd(spaceship, quantity))
         {
             Spaceships[spaceship] += quantity;
         }
+
+        return true;
     }
     
-    public static void Add(Piece.Piece piece, uint quantity)
+    public static bool Add(Piece.Piece piece, uint quantity)
     {
+        if (quantity == 0)
+        {
+            return false;
+        }
         if (!Pieces.TryAdd(piece, quantity))
         {
             Pieces[piece] += quantity;
         }
+
+        return true;
     }
     
     public static Piece.Piece? Remove(Piece.Piece piece, uint quantity)
