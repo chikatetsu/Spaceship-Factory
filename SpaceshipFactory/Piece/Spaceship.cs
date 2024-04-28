@@ -2,45 +2,47 @@ namespace SpaceshipFactory.Piece;
 
 public class Spaceship
 {
-    public readonly string _name;
-    public Dictionary<Piece?, uint> _pieces;
+    public readonly string Name;
+    public readonly Dictionary<Piece, uint> Pieces;
 
-    public Spaceship(string name, Dictionary<Piece?, uint> pieces)
+    public Spaceship(string name, Dictionary<Piece, uint> pieces)
     {
-        _name = name;
-        _pieces = pieces;
+        Name = name;
+        Pieces = pieces;
     }
 
     public Spaceship(string name)
     {
-        _pieces = new Dictionary<Piece?, uint>();
-        _name = name;
+        Name = name;
+        Pieces = new Dictionary<Piece, uint>();
     }
     
-    public void AddPiece(Piece? piece, uint quantity)
+    public void AddPiece(Piece piece, uint quantity)
     {
-        if (_pieces.ContainsKey(piece))
+        if (!Pieces.TryAdd(piece, quantity))
         {
-            _pieces[piece] += quantity;
-            return;
+            Pieces[piece] += quantity;
         }
-        _pieces.Add(piece, quantity);
     }
     
-    public void RemovePiece(Piece? piece, uint quantity)
+    public bool RemovePiece(Piece piece, uint quantity)
     {
-        if (_pieces.ContainsKey(piece))
+        if (!Pieces.ContainsKey(piece))
         {
-            _pieces[piece] -= quantity;
-            if (_pieces[piece] == 0)
-            {
-                _pieces.Remove(piece);
-            }
+            return false;
         }
+
+        Pieces[piece] -= quantity;
+        if (Pieces[piece] == 0)
+        {
+            Pieces.Remove(piece);
+        }
+
+        return true;
     }
     
     public override string ToString()
     {
-        return _name;
+        return Name;
     }
 }

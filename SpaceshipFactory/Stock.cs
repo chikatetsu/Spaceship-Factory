@@ -5,7 +5,7 @@ namespace SpaceshipFactory;
 public static class Stock
 {
     private static readonly Dictionary<Spaceship, uint> Spaceships = new();
-    private static readonly Dictionary<Piece.Piece?, uint> Pieces = new()
+    private static readonly Dictionary<Piece.Piece, uint> Pieces = new()
     {
         { new Engine("Engine_EE1"), 5 },
         { new Engine("Engine_ES1"), 9 },
@@ -21,42 +21,54 @@ public static class Stock
         { new Wings("Wings_WC1"), 24 },
     };
 
-    public static void Add(Spaceship spaceship, uint quantity)
+    public static bool Add(Spaceship spaceship, uint quantity)
     {
-        if (Spaceships.ContainsKey(spaceship))
+        if (quantity == 0)
+        {
+            return false;
+        }
+        if (!Spaceships.TryAdd(spaceship, quantity))
         {
             Spaceships[spaceship] += quantity;
-            return;
         }
-        Spaceships.Add(spaceship, quantity);
+
+        return true;
     }
     
-    public static Piece.Piece? Remove(Piece.Piece? piece, uint quantity)
+    public static bool Add(Piece.Piece piece, uint quantity)
+    {
+        if (quantity == 0)
+        {
+            return false;
+        }
+        if (!Pieces.TryAdd(piece, quantity))
+        {
+            Pieces[piece] += quantity;
+        }
+
+        return true;
+    }
+    
+    public static bool Remove(Piece.Piece piece, uint quantity)
     {
         if (!Pieces.ContainsKey(piece))
         {
             Logger.PrintError($"Piece {piece} is not in stock.");
-            return null;
+            return false;
+        }
+        if (quantity == 0)
+        {
+            return false;
         }
         if (Pieces[piece] < quantity)
         {
             Logger.PrintError($"Not enough {piece} in stock.");
-            return null;
+            return false;
         }
         
         Logger.PrintInstruction("GET_OUT_STOCK", $"{quantity} {piece}");
         Pieces[piece] -= quantity;
-        return piece;
-    }
-
-    public static void Add(Piece.Piece? piece, uint quantity)
-    {
-        if (Pieces.ContainsKey(piece))
-        {
-            Pieces[piece] += quantity;
-            return;
-        }
-        Pieces.Add(piece, quantity);
+        return true;
     }
 
     public static string GetStocks()
@@ -85,6 +97,4 @@ public static class Stock
     {
         return true;
     }
-   
 }
-

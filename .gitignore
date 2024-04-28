@@ -4,3 +4,9 @@
 SpaceshipFactory/bin/
 
 SpaceshipFactory/obj/
+
+*.user
+
+TestSpaceshipFactory/bin/
+
+TestSpaceshipFactory/obj/
