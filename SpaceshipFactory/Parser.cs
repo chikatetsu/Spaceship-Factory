@@ -19,7 +19,10 @@ public class Parser
                 }
                 break;
             case "NEEDED_STOCKS":
-                if (IsNeededStocksCommandValid(args)) { }
+                if (IsNeededStocksCommandValid(args))
+                {
+                    StockCalculator.PrintNeededStocks(args);
+                }
                 break;
             case "INSTRUCTIONS":
                 if (IsInstructionsCommandValid(args)) { }
