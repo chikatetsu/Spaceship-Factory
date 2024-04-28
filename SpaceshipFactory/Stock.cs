@@ -49,22 +49,26 @@ public static class Stock
         return true;
     }
     
-    public static Piece.Piece? Remove(Piece.Piece piece, uint quantity)
+    public static bool Remove(Piece.Piece piece, uint quantity)
     {
         if (!Pieces.ContainsKey(piece))
         {
             Logger.PrintError($"Piece {piece} is not in stock.");
-            return null;
+            return false;
+        }
+        if (quantity == 0)
+        {
+            return false;
         }
         if (Pieces[piece] < quantity)
         {
             Logger.PrintError($"Not enough {piece} in stock.");
-            return null;
+            return false;
         }
         
         Logger.PrintInstruction("GET_OUT_STOCK", $"{quantity} {piece}");
         Pieces[piece] -= quantity;
-        return piece;
+        return true;
     }
 
     public static string GetStocks()

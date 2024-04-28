@@ -63,8 +63,7 @@ public static class ProductionManager
 
                 foreach (var piece in spaceship.Pieces)
                 {
-                    Piece.Piece? pieceFromStock = Stock.Remove(piece.Key, piece.Value);
-                    if (pieceFromStock == null)
+                    if (!Stock.Remove(piece.Key, piece.Value))
                     {
                         foreach (var pieceQty in piecesFromStock)
                         {
@@ -74,13 +73,13 @@ public static class ProductionManager
                         return;
                     }
 
-                    if (piecesFromStock.ContainsKey(pieceFromStock))
+                    if (piecesFromStock.ContainsKey(piece.Key))
                     {
-                        piecesFromStock[pieceFromStock]+= piece.Value;
+                        piecesFromStock[piece.Key]+= piece.Value;
                     }
                     else
                     {
-                        piecesFromStock.Add(pieceFromStock, piece.Value);
+                        piecesFromStock.Add(piece.Key, piece.Value);
                     }
                 }
 
