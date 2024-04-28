@@ -1,111 +1,99 @@
 using SpaceshipFactory.Piece;
 
-namespace SpaceshipFactory
+namespace SpaceshipFactory;
+
+public static class ProductionManager
 {
-    public static class ProductionManager
+    private static readonly List<Spaceship?> ShipModels = new()
     {
+        new Spaceship("Explorer"),
+        new Spaceship("Speeder"),
+        new Spaceship("Cargo")
+    };
 
-        public static readonly List<Spaceship?> ShipModels = new()
+
+    public static void Produce(string[] args)
+    {
+        ShipModels[0]?.AddPiece(new Hull("Hull_HE1"), 1);
+        ShipModels[0]?.AddPiece(new Engine("Engine_EE1"), 1);
+        ShipModels[0]?.AddPiece(new Wings("Wings_WE1"), 1);
+        ShipModels[0]?.AddPiece(new Thruster("Thruster_TE1"), 1);
+
+        ShipModels[1]?.AddPiece(new Hull("Hull_HS1"), 1);
+        ShipModels[1]?.AddPiece(new Engine("Engine_ES1"), 1);
+        ShipModels[1]?.AddPiece(new Wings("Wings_WS1"), 1);
+        ShipModels[1]?.AddPiece(new Thruster("Thruster_TS1"), 2);
+
+        ShipModels[2]?.AddPiece(new Hull("Hull_HC1"), 1);
+        ShipModels[2]?.AddPiece(new Engine("Engine_EC1"), 1);
+        ShipModels[2]?.AddPiece(new Wings("Wings_WC1"), 1);
+        ShipModels[2]?.AddPiece(new Thruster("Thruster_TC1"), 1);
+
+        for (int i = 0; i < args.Length; i += 2)
         {
-            new Spaceship("Explorer"),
-            new Spaceship("Speeder"),
-            new Spaceship("Cargo")
-        };
+            string quantityArg = args[i];
+            string modelArg = args[i + 1];
 
-
-        public static void Produce(string[] args)
-        {
-            if (args.Length % 2 != 0)
+            if (!int.TryParse(quantityArg, out int quantity) || quantity < 1)
             {
-                Logger.PrintError("Arguments must be in pairs of quantity and spaceship model.");
-                return;
+                continue;
             }
-            
-            ShipModels[0]?.AddPiece(new Hull("Hull_HE1"), 1);
-            ShipModels[0]?.AddPiece(new Engine("Engine_EE1"), 1);
-            ShipModels[0]?.AddPiece(new Wings("Wings_WE1"), 1);
-            ShipModels[0]?.AddPiece(new Thruster("Thruster_TE1"), 1);
-            
-            ShipModels[1]?.AddPiece(new Hull("Hull_HS1"), 1);
-            ShipModels[1]?.AddPiece(new Engine("Engine_ES1"), 1);
-            ShipModels[1]?.AddPiece(new Wings("Wings_WS1"), 1);
-            ShipModels[1]?.AddPiece(new Thruster("Thruster_TS1"), 2);
-            
-            ShipModels[2]?.AddPiece(new Hull("Hull_HC1"), 1);
-            ShipModels[2]?.AddPiece(new Engine("Engine_EC1"), 1);
-            ShipModels[2]?.AddPiece(new Wings("Wings_WC1"), 1);
-            ShipModels[2]?.AddPiece(new Thruster("Thruster_TC1"), 1);
-            
-            for (int i = 0; i < args.Length; i += 2)
+
+            Spaceship? spaceship = ShipModels.Find(spaceship => spaceship.Name == modelArg);
+
+            if (spaceship == null)
             {
-                string quantityArg = args[i];
-                string modelArg = args[i + 1];
+                Logger.PrintError($"Spaceship model '{modelArg}' is not available.");
+                continue;
+            }
 
-                if (!int.TryParse(quantityArg, out int quantity) || quantity < 1)
+            Assemble(spaceship, quantity);
+        }
+    }
+
+
+    private static void Assemble(Spaceship spaceship, int quantity)
+    {
+        if (Stock.Verify(spaceship, quantity))
+        {
+            for (int i = 0; i < quantity; i++)
+            {
+                Logger.PrintInstruction("PRODUCING", $"{spaceship.Name}");
+                Dictionary<Piece.Piece, uint> piecesFromStock = new();
+
+                foreach (var piece in spaceship.Pieces)
                 {
-                    Logger.PrintError($"Invalid quantity '{quantityArg}'. Expected a positive integer.");
-                    continue;
-                }
-                
-                Spaceship? spaceship = ShipModels.Find(spaceship => spaceship._name == modelArg);
+                    if (!Stock.Remove(piece.Key, piece.Value))
+                    {
+                        foreach (var pieceQty in piecesFromStock)
+                        {
+                            Stock.Add(pieceQty.Key, pieceQty.Value);
+                        }
 
-                if (spaceship == null)
+                        return;
+                    }
+
+                    if (piecesFromStock.ContainsKey(piece.Key))
+                    {
+                        piecesFromStock[piece.Key]+= piece.Value;
+                    }
+                    else
+                    {
+                        piecesFromStock.Add(piece.Key, piece.Value);
+                    }
+                }
+
+                foreach (var PieceFromStock in piecesFromStock)
                 {
-                    Logger.PrintError($"Spaceship model '{modelArg}' is not available.");
-                    continue;
+                    Logger.PrintInstruction("ASSEMBLE", $"{PieceFromStock.Key.Name}");
                 }
-                
-                
 
-                Assemble(spaceship, quantity);
+                Logger.PrintResult($"FINISHED {spaceship.Name}");
             }
         }
-
-
-        private static void Assemble(Spaceship spaceship, int quantity)
+        else
         {
-            if (Stock.Verify(spaceship, quantity))
-            {
-                for (int i = 0; i < quantity; i++)
-                {
-                    Logger.PrintInstruction("PRODUCING", $"{spaceship._name}");
-                    Dictionary<Piece.Piece, uint> piecesFromStock = new();
-
-                    foreach (var piece in spaceship._pieces)
-                    {
-                        Piece.Piece? pieceFromStock = Stock.Remove(piece.Key, piece.Value);
-                        if (pieceFromStock == null)
-                        {
-                            foreach (var pieceQty in piecesFromStock)
-                            {
-                                Stock.Add(pieceQty.Key, pieceQty.Value);
-                            }
-
-                            return;
-                        }
-
-                        if (piecesFromStock.ContainsKey(pieceFromStock))
-                        {
-                            piecesFromStock[pieceFromStock]+= piece.Value;
-                        }
-                        else
-                        {
-                            piecesFromStock.Add(pieceFromStock, piece.Value);
-                        }
-                    }
-
-                    foreach (var PieceFromStock in piecesFromStock)
-                    {
-                        Logger.PrintInstruction("ASSEMBLE", $"{PieceFromStock.Key._name}");
-                    }
-                    
-                    Logger.PrintResult($"FINISHED {spaceship._name}");
-                }
-            }
-            else
-            {
-                Logger.PrintError("Unable to start production due to insufficient stock.");
-            }
+            Logger.PrintError("Unable to start production due to insufficient stock.");
         }
     }
 }

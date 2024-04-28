@@ -2,23 +2,23 @@ namespace SpaceshipFactory.Piece;
 
 public class Piece
 {
-    public readonly string _name;
+    public readonly string Name;
 
-    public Piece(string name)
+    protected Piece(string name)
     {
-        _name = name;
+        Name = name;
     }
 
     public override string ToString()
     {
-        return _name;
+        return Name;
     }
 
     public override bool Equals(object? obj)
     {
         if (obj is Piece piece)
         {
-            return _name == piece._name;
+            return Name == piece.Name;
         }
         
         return false;
@@ -26,6 +26,6 @@ public class Piece
     
     public override int GetHashCode()
     {
-        return _name.GetHashCode();
+        return Name.GetHashCode();
     }
 }
