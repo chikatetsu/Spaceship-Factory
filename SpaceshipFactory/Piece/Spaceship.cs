@@ -17,12 +17,14 @@ public class Spaceship
         Pieces = new Dictionary<Piece, uint>();
     }
     
-    public void AddPiece(Piece piece, uint quantity)
+    public Spaceship AddPiece(Piece piece, uint quantity)
     {
         if (!Pieces.TryAdd(piece, quantity))
         {
             Pieces[piece] += quantity;
         }
+        
+        return this;
     }
     
     public bool RemovePiece(Piece piece, uint quantity)

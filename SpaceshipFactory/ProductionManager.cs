@@ -14,20 +14,22 @@ public static class ProductionManager
 
     public static void Produce(string[] args)
     {
-        ShipModels[0]?.AddPiece(new Hull("Hull_HE1"), 1);
-        ShipModels[0]?.AddPiece(new Engine("Engine_EE1"), 1);
-        ShipModels[0]?.AddPiece(new Wings("Wings_WE1"), 1);
-        ShipModels[0]?.AddPiece(new Thruster("Thruster_TE1"), 1);
+        ShipModels[0]?
+            .AddPiece(new Hull("Hull_HE1"), 1)
+            .AddPiece(new Engine("Engine_EE1"), 1)
+            .AddPiece(new Wings("Wings_WE1"), 1)
+            .AddPiece(new Thruster("Thruster_TE1"), 1);
 
-        ShipModels[1]?.AddPiece(new Hull("Hull_HS1"), 1);
-        ShipModels[1]?.AddPiece(new Engine("Engine_ES1"), 1);
-        ShipModels[1]?.AddPiece(new Wings("Wings_WS1"), 1);
-        ShipModels[1]?.AddPiece(new Thruster("Thruster_TS1"), 2);
+        ShipModels[1]?
+            .AddPiece(new Hull("Hull_HS1"), 1)
+            .AddPiece(new Engine("Engine_ES1"), 1)
+            .AddPiece(new Wings("Wings_WS1"), 1)
+            .AddPiece(new Thruster("Thruster_TS1"), 2);
 
-        ShipModels[2]?.AddPiece(new Hull("Hull_HC1"), 1);
-        ShipModels[2]?.AddPiece(new Engine("Engine_EC1"), 1);
-        ShipModels[2]?.AddPiece(new Wings("Wings_WC1"), 1);
-        ShipModels[2]?.AddPiece(new Thruster("Thruster_TC1"), 1);
+        ShipModels[2]?.AddPiece(new Hull("Hull_HC1"), 1)
+            .AddPiece(new Engine("Engine_EC1"), 1)
+            .AddPiece(new Wings("Wings_WC1"), 1)
+            .AddPiece(new Thruster("Thruster_TC1"), 1);
 
         for (int i = 0; i < args.Length; i += 2)
         {
