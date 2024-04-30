@@ -12,28 +12,18 @@ namespace SpaceshipFactory
         };
         public static void Init(string[] args)
         {
-            for (int i = 0; i < args.Length; i++)
+            for (int i = 0; i < args.Length; i += 2)
             {
-                /*
-                ShipModels[0]?
-                    .AddPiece(new Hull("Hull_HE1"), 1)
-                    .AddPiece(new Engine("Engine_EE1"), 1)
-                    .AddPiece(new Wings("Wings_WE1"), 1)
-                    .AddPiece(new Thruster("Thruster_TE1"), 1);
+                string quantityArg = args[i];
+                string modelArg = args[i + 1];
+                int quantity = 1;
 
-                ShipModels[1]?
-                    .AddPiece(new Hull("Hull_HS1"), 1)
-                    .AddPiece(new Engine("Engine_ES1"), 1)
-                    .AddPiece(new Wings("Wings_WS1"), 1)
-                    .AddPiece(new Thruster("Thruster_TS1"), 2);
 
-                ShipModels[2]?.AddPiece(new Hull("Hull_HC1"), 1)
-                    .AddPiece(new Engine("Engine_EC1"), 1)
-                    .AddPiece(new Wings("Wings_WC1"), 1)
-                    .AddPiece(new Thruster("Thruster_TC1"), 1);
-
-                */
-                string modelArg = args[i];
+                if (!int.TryParse(quantityArg, out int newQuantity) || newQuantity < 1)
+                {
+                    quantity = newQuantity;
+                    continue;
+                }
 
                 Spaceship? spaceship = ShipModels.Find(spaceship => spaceship.Name == modelArg);
 
@@ -55,13 +45,15 @@ namespace SpaceshipFactory
                     new Instruction("ASSEMBLE", "TMP3 Thruster_HS1")
                 };
 
-                Logger.PrintInstruction("PRODUCING", $"{spaceship.Name}");
-                foreach (Instruction instruction in instructions)
+                for(int j = 0; j <= quantity; j++)
                 {
-                    Logger.PrintInstruction(instruction.Header, instruction.Value);
+                    Logger.PrintInstruction("\nPRODUCING", $"{spaceship.Name} {j+1}");
+                    foreach (Instruction instruction in instructions)
+                    {
+                        Logger.PrintInstruction(instruction.Header, instruction.Value);
+                    }
+                    Logger.PrintInstruction("FINISHED", $"{spaceship.Name} {j+1}");
                 }
-                Logger.PrintInstruction("FINISHED", $"{spaceship.Name}");
-
 
             }
 

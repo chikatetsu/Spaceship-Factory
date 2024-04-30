@@ -164,6 +164,19 @@ public class Parser
             Logger.PrintError("INSTRUCTIONS command expects at least 2 argument");
             return false;
         }
+        if (args.Count % 2 != 0)
+        {
+            Logger.PrintError("INSTRUCTIONS command expects an even number of arguments");
+            return false;
+        }
+        for (int i = 0; i < args.Count; i += 2)
+        {
+            if (!int.TryParse(args[i], out _))
+            {
+                Logger.PrintError($"`{args[i]}` is not a valid quantity");
+                return false;
+            }
+        }
         return true;
     }
 
