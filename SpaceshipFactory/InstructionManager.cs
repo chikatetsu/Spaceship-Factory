@@ -36,44 +36,60 @@ namespace SpaceshipFactory
 
                 Instruction[] instructions = new Instruction[0];
 
+                string hullPieceName = "";
+                string enginePieceName = "";
+                string wingsPieceName = "";
+                string thrusterPieceName = "";
 
                 switch (spaceship.Name)
                 {
                     case "Explorer":
+                        hullPieceName = "Hull_HE1";
+                        enginePieceName = "Engine_EE1";
+                        wingsPieceName = "Wings_WE1";
+                        thrusterPieceName = "Thruster_TE1";
                         instructions = new Instruction[]
                         {
-                            new Instruction("GET_OUT_OF_STOCK", "1 Hull_HE1"),
-                            new Instruction("GET_OUT_OF_STOCK", "1 Engine_EE1"),
-                            new Instruction("GET_OUT_OF_STOCK", "1 Wings_WE1"),
-                            new Instruction("GET_OUT_OF_STOCK", "1 Thruster_TE1"),
-                            new Instruction("ASSEMBLE", "TMP1 Hull_HE1 Engine_EE1"),
-                            new Instruction("ASSEMBLE", "TMP1 Wings_WE1"),
-                            new Instruction("ASSEMBLE", "TMP3[TMP1, Wings_WE1] Thruster_TE1"),
+                            new Instruction("GET_OUT_OF_STOCK", $"1 {hullPieceName}"),
+                            new Instruction("GET_OUT_OF_STOCK", $"1 {enginePieceName}"),
+                            new Instruction("GET_OUT_OF_STOCK", $"1 {wingsPieceName}"),
+                            new Instruction("GET_OUT_OF_STOCK", $"1 {thrusterPieceName}"),
+                            new Instruction("ASSEMBLE", $"TMP1 {hullPieceName} {enginePieceName}"),
+                            new Instruction("ASSEMBLE", $"TMP1 {wingsPieceName}"),
+                            new Instruction("ASSEMBLE", $"TMP3[TMP1, {wingsPieceName}] {thrusterPieceName}"),
                         };
                         break;
                     case "Speeder":
+                        hullPieceName = "Hull_HS1";
+                        enginePieceName = "Engine_ES1";
+                        wingsPieceName = "Wings_WS1";
+                        thrusterPieceName = "Thruster_TS1";
                         instructions = new Instruction[]
                         {
-                            new Instruction("GET_OUT_OF_STOCK", "1 Hull_HS1"),
-                            new Instruction("GET_OUT_OF_STOCK", "1 Engine_ES1"),
-                            new Instruction("GET_OUT_OF_STOCK", "1 Wings_WS1"),
-                            new Instruction("GET_OUT_OF_STOCK", "2 Thruster_TS1"),
-                            new Instruction("ASSEMBLE", "TMP1 Hull_HS1 Engine_ES1"),
-                            new Instruction("ASSEMBLE", "TMP1 Wings_WS1"),
-                            new Instruction("ASSEMBLE", "TMP3[TMP1, Wings_WS1] Thruster_TS1"),
-                            new Instruction("ASSEMBLE", "TMP3 Thruster_TS1")
+                            new Instruction("GET_OUT_OF_STOCK", $"1 {hullPieceName}"),
+                            new Instruction("GET_OUT_OF_STOCK", $"1 {enginePieceName}"),
+                            new Instruction("GET_OUT_OF_STOCK", $"1 {wingsPieceName}"),
+                            new Instruction("GET_OUT_OF_STOCK", $"2 {thrusterPieceName}"),
+                            new Instruction("ASSEMBLE", $"TMP1 {hullPieceName} {enginePieceName}"),
+                            new Instruction("ASSEMBLE", $"TMP1 {wingsPieceName}"),
+                            new Instruction("ASSEMBLE", $"TMP3[TMP1, {wingsPieceName}] {thrusterPieceName}"),
+                            new Instruction("ASSEMBLE", $"TMP3 {thrusterPieceName}")
                         };
                         break;
                     case "Cargo":
+                        hullPieceName = "Hull_HC1";
+                        enginePieceName = "Engine_EC1";
+                        wingsPieceName = "Wings_WC1";
+                        thrusterPieceName = "Thruster_TC1";
                         instructions = new Instruction[]
                         {
-                            new Instruction("GET_OUT_OF_STOCK", "1 Hull_HC1"),
-                            new Instruction("GET_OUT_OF_STOCK", "1 Engine_EC1"),
-                            new Instruction("GET_OUT_OF_STOCK", "1 Wings_WC1"),
-                            new Instruction("GET_OUT_OF_STOCK", "1 Thruster_TC1"),
-                            new Instruction("ASSEMBLE", "TMP1 Hull_HC1 Engine_EC1"),
-                            new Instruction("ASSEMBLE", "TMP1 Wings_WC1"),
-                            new Instruction("ASSEMBLE", "TMP3[TMP1, Wings_WC1] Thruster_TC1"),
+                            new Instruction("GET_OUT_OF_STOCK", $"1 {hullPieceName}"),
+                            new Instruction("GET_OUT_OF_STOCK", $"1 {enginePieceName}"),
+                            new Instruction("GET_OUT_OF_STOCK", $"1 {wingsPieceName}"),
+                            new Instruction("GET_OUT_OF_STOCK", $"1 {thrusterPieceName}"),
+                            new Instruction("ASSEMBLE", $"TMP1 {hullPieceName} {enginePieceName}"),
+                            new Instruction("ASSEMBLE", $"TMP1 {wingsPieceName}"),
+                            new Instruction("ASSEMBLE", $"TMP3[TMP1, {wingsPieceName}] {thrusterPieceName}"),
                         };
                         break;
                 }
