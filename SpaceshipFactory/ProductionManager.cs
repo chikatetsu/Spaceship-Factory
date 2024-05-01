@@ -49,54 +49,54 @@ public static class ProductionManager
                 continue;
             }
 
-            if(isInstructions) Instructions(spaceship, quantity);
-            else Assemble(spaceship, quantity);
+            if(isInstructions)
+            {
+                Instructions(spaceship, quantity);
+            }
+            else
+            {
+                Assemble(spaceship, quantity);
+            }
         }
     }
 
 
-    private static void Assemble(Spaceship spaceship, int quantity)
+    private static void Assemble(Spaceship spaceship, int spaceshipQuantity)
     {
-        if (!Stock.Verify(spaceship, quantity))
+        if (!Stock.Verify(spaceship, spaceshipQuantity))
         {
             Logger.PrintError("Unable to start production due to insufficient stock.");
         }
 
-        for (int i = 0; i < quantity; i++)
+        for (int i = 0; i < spaceshipQuantity; i++)
         {
-            Logger.PrintInstruction("PRODUCING", $"{spaceship.Name}");
-            Dictionary<Piece.Piece, uint> piecesFromStock = new();
+            Spaceship newSpaceship = new(spaceship.Name);
 
-            foreach (var piece in spaceship.Pieces)
+            foreach ((Piece.Piece piece, uint pieceQuantity) in spaceship.Pieces)
             {
-                if (!Stock.Remove(piece.Key, piece.Value))
+                if (!Stock.Remove(piece, pieceQuantity))
                 {
-                    foreach (var pieceQty in piecesFromStock)
+                    foreach (var pieceQty in newSpaceship.Pieces)
                     {
                         Stock.Add(pieceQty.Key, pieceQty.Value);
                     }
-
+                    Logger.PrintError($"Insufficient stock. Produced {i} {spaceship.Name}");
                     return;
                 }
 
-                if (piecesFromStock.ContainsKey(piece.Key))
+                if (newSpaceship.Pieces.ContainsKey(piece))
                 {
-                    piecesFromStock[piece.Key]+= piece.Value;
+                    newSpaceship.Pieces[piece] += pieceQuantity;
                 }
                 else
                 {
-                    piecesFromStock.Add(piece.Key, piece.Value);
+                    newSpaceship.Pieces.Add(piece, pieceQuantity);
                 }
             }
-            /*
-            foreach (var PieceFromStock in piecesFromStock)
-            {
-                Logger.PrintInstruction("ASSEMBLE", $"{PieceFromStock.Key.Name}");
-            }
-            */
 
-            Logger.PrintResult($"FINISHED {spaceship.Name}");
+            Stock.Add(newSpaceship, 1);
         }
+        Logger.PrintResult("STOCK_UPDATED");
     }
 
     private static void Instructions(Spaceship spaceship, int quantity)
