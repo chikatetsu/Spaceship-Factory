@@ -6,9 +6,9 @@ public static class ProductionManager
 {
     public static void Produce(Spaceship model, uint quantityToProduce)
     {
-        if (!Stock.Verify(model, quantityToProduce))
+        if (!Stock.IsStockSufficient(model, quantityToProduce))
         {
-            Logger.PrintError("Unable to start production due to insufficient stock.");
+            Logger.PrintError("Unable to start production due to insufficient stock");
         }
 
         for (int i = 0; i < quantityToProduce; i++)

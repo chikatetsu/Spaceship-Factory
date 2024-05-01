@@ -117,7 +117,7 @@ public class Parser
                         }
                         Spaceship spaceship = new Spaceship(args[i + 1]);
 
-                        if (!Stock.Verify(spaceship, quantity))
+                        if (!Stock.IsStockSufficient(spaceship, quantity))
                         {
                             Logger.PrintResult("UNAVAILABLE");
                             return;

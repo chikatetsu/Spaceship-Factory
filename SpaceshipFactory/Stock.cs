@@ -93,8 +93,19 @@ public static class Stock
         return str;
     }
 
-    public static bool Verify(Spaceship spaceshipModel, uint quantity)
+    public static bool IsStockSufficient(Spaceship model, uint spaceshipQuantity)
     {
+        foreach ((Piece.Piece? piece, uint pieceQuantity) in model.Pieces)
+        {
+            if (!Pieces.ContainsKey(piece))
+            {
+                return false;
+            }
+            if (Pieces[piece] < pieceQuantity * spaceshipQuantity)
+            {
+                return false;
+            }
+        }
         return true;
     }
 }
