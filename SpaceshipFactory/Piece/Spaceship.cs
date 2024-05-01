@@ -47,9 +47,4 @@ public class Spaceship
     {
         return Name;
     }
-
-    public void RemoveAllPieces()
-    {
-        Pieces.Clear();
-    }
 }

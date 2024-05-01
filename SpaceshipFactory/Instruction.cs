@@ -2,8 +2,8 @@
 {
     internal class Instruction
     {
-        public string Header { get; set; }
-        public string Value { get; set; }
+        public string Header { get; }
+        public string Value { get; }
 
         public Instruction(string header, string value)
         {
