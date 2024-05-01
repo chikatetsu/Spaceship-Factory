@@ -9,6 +9,7 @@ public class Parser
         string[] split = FormatInput(input);
         string command = split[0];
         string[] args = split[1..];
+        Dictionary<Spaceship, uint>? modelQuantity;
 
         switch (command)
         {
@@ -19,13 +20,21 @@ public class Parser
                 }
                 break;
             case "NEEDED_STOCKS":
-                if (IsNeededStocksCommandValid(args))
+                modelQuantity = MapArgsToQuantityOfSpaceship(args);
+                if (modelQuantity != null)
                 {
-                    StockCalculator.PrintNeededStocks(args);
+                    StockCalculator.PrintNeededStocks(modelQuantity);
                 }
                 break;
             case "INSTRUCTIONS":
-                if (IsInstructionsCommandValid(args)) { }
+                modelQuantity = MapArgsToQuantityOfSpaceship(args);
+                if (modelQuantity != null)
+                {
+                    foreach ((Spaceship model, uint quantity) in modelQuantity)
+                    {
+                        InstructionManager.PrintInstructions(model, quantity);
+                    }
+                }
                 break;
             case "VERIFY":
                 if (IsVerifyCommandValid(args.Length))
@@ -34,9 +43,13 @@ public class Parser
                 }
                 break;
             case "PRODUCE":
-                if (IsProduceCommandValid(args))
+                modelQuantity = MapArgsToQuantityOfSpaceship(args);
+                if (modelQuantity != null)
                 {
-                    ProductionManager.Produce(args);
+                    foreach ((Spaceship model, uint quantity) in modelQuantity)
+                    {
+                        ProductionManager.Produce(model, quantity);
+                    }
                 }
                 break;
             case "":
@@ -98,13 +111,13 @@ public class Parser
                 {
                     for (int i = 0; i < args.Length; i += 2)
                     {
-                        if (!int.TryParse(args[i], out int quantity) || quantity < 1)
+                        if (!uint.TryParse(args[i], out uint quantity) || quantity < 1)
                         {
                             continue;
                         }
                         Spaceship spaceship = new Spaceship(args[i + 1]);
 
-                        if (!Stock.Verify(spaceship, quantity))
+                        if (!Stock.IsStockSufficient(spaceship, quantity))
                         {
                             Logger.PrintResult("UNAVAILABLE");
                             return;
@@ -145,7 +158,7 @@ public class Parser
         }
         for (int i = 0; i < args.Count; i += 2)
         {
-            if (!int.TryParse(args[i], out _))
+            if (!int.TryParse(args[i], out int quantity) || quantity < 1)
             {
                 Logger.PrintError($"`{args[i]}` is not a valid quantity");
                 return false;
@@ -169,7 +182,7 @@ public class Parser
         }
         for (int i = 0; i < args.Count; i += 2)
         {
-            if (!int.TryParse(args[i], out _))
+            if (!int.TryParse(args[i], out int quantity) || quantity < 1)
             {
                 Logger.PrintError($"`{args[i]}` is not a valid quantity");
                 return false;
@@ -204,12 +217,52 @@ public class Parser
         }
         for (int i = 0; i < args.Count; i += 2)
         {
-            if (!int.TryParse(args[i], out _))
+            if (!int.TryParse(args[i], out int quantity) || quantity < 1)
             {
                 Logger.PrintError($"`{args[i]}` is not a valid quantity");
                 return false;
             }
         }
         return true;
+    }
+
+
+    private static Dictionary<Spaceship, uint>? MapArgsToQuantityOfSpaceship(IReadOnlyList<string> args)
+    {
+        if (args.Count == 0)
+        {
+            Logger.PrintError("PRODUCE command expects at least 2 argument");
+            return null;
+        }
+        if (args.Count % 2 != 0)
+        {
+            Logger.PrintError("PRODUCE command expects an even number of arguments");
+            return null;
+        }
+
+        var spaceshipQuantities = new Dictionary<Spaceship, uint>();
+        for (int i = 0; i < args.Count; i += 2)
+        {
+            if (!uint.TryParse(args[i], out uint quantity) || quantity < 1)
+            {
+                Logger.PrintError($"`{args[i]}` is not a valid quantity");
+                return null;
+            }
+
+            string modelName = args[i + 1];
+
+            Spaceship? model = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == modelName);
+            if (model == null)
+            {
+                Logger.PrintError($"Spaceship model '{modelName}' is not available.");
+                continue;
+            }
+
+            if (!spaceshipQuantities.TryAdd(model, quantity))
+            {
+                spaceshipQuantities[model] += quantity;
+            }
+        }
+        return spaceshipQuantities;
     }
 }

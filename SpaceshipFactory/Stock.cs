@@ -66,7 +66,7 @@ public static class Stock
             return false;
         }
         
-        Logger.PrintInstruction("GET_OUT_STOCK", $"{quantity} {piece}");
+        //Logger.PrintInstruction("GET_OUT_STOCK", $"{quantity} {piece}");
         Pieces[piece] -= quantity;
         return true;
     }
@@ -74,27 +74,38 @@ public static class Stock
     public static string GetStocks()
     {
         string str = "";
-        foreach (var kv in Spaceships)
+        foreach ((Spaceship spaceship, uint quantity) in Spaceships)
         {
-            if (kv.Value == 0)
+            if (quantity == 0)
             {
                 continue;
             }
-            str += $"{kv.Value} {kv.Key}\n";
+            str += $"{quantity} {spaceship}\n";
         }
-        foreach (var kv in Pieces)
+        foreach ((Piece.Piece piece, uint quantity) in Pieces)
         {
-            if (kv.Value == 0)
+            if (quantity == 0)
             {
                 continue;
             }
-            str += $"{kv.Value} {kv.Key}\n";
+            str += $"{quantity} {piece}\n";
         }
         return str;
     }
 
-    public static bool Verify(Spaceship spaceshipModel, int quantity)
+    public static bool IsStockSufficient(Spaceship model, uint spaceshipQuantity)
     {
+        foreach ((Piece.Piece? piece, uint pieceQuantity) in model.Pieces)
+        {
+            if (!Pieces.ContainsKey(piece))
+            {
+                return false;
+            }
+            if (Pieces[piece] < pieceQuantity * spaceshipQuantity)
+            {
+                return false;
+            }
+        }
         return true;
     }
 }
