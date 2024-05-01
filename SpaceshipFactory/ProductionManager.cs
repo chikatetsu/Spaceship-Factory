@@ -14,12 +14,17 @@ public static class ProductionManager
 
     public static void Produce(string[] args)
     {
+        foreach (var shipModel in ShipModels)
+        {
+            shipModel?.RemoveAllPieces();
+        }
+        
         ShipModels[0]?
             .AddPiece(new Hull("Hull_HE1"), 1)
             .AddPiece(new Engine("Engine_EE1"), 1)
             .AddPiece(new Wings("Wings_WE1"), 1)
             .AddPiece(new Thruster("Thruster_TE1"), 1);
-
+        
         ShipModels[1]?
             .AddPiece(new Hull("Hull_HS1"), 1)
             .AddPiece(new Engine("Engine_ES1"), 1)
