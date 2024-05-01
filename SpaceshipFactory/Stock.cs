@@ -93,7 +93,7 @@ public static class Stock
         return str;
     }
 
-    public static bool Verify(Spaceship spaceshipModel, int quantity)
+    public static bool Verify(Spaceship spaceshipModel, uint quantity)
     {
         return true;
     }

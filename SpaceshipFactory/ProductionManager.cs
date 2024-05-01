@@ -4,49 +4,18 @@ namespace SpaceshipFactory;
 
 public static class ProductionManager
 {
-    public static void Produce(string[] args, bool isInstructions)
+    public static void Produce(Spaceship model, uint quantityToProduce)
     {
-        for (int i = 0; i < args.Length; i += 2)
-        {
-            string quantityArg = args[i];
-            string modelArg = args[i + 1];
-
-            if (!int.TryParse(quantityArg, out int quantity) || quantity < 1)
-            {
-                continue;
-            }
-
-            Spaceship? spaceship = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == modelArg);
-            if (spaceship == null)
-            {
-                Logger.PrintError($"Spaceship model '{modelArg}' is not available.");
-                continue;
-            }
-
-            if(isInstructions)
-            {
-                Instructions(spaceship, quantity);
-            }
-            else
-            {
-                Assemble(spaceship, quantity);
-            }
-        }
-    }
-
-
-    private static void Assemble(Spaceship spaceship, int spaceshipQuantity)
-    {
-        if (!Stock.Verify(spaceship, spaceshipQuantity))
+        if (!Stock.Verify(model, quantityToProduce))
         {
             Logger.PrintError("Unable to start production due to insufficient stock.");
         }
 
-        for (int i = 0; i < spaceshipQuantity; i++)
+        for (int i = 0; i < quantityToProduce; i++)
         {
-            Spaceship newSpaceship = new(spaceship.Name);
+            Spaceship newSpaceship = new(model.Name);
 
-            foreach ((Piece.Piece piece, uint pieceQuantity) in spaceship.Pieces)
+            foreach ((Piece.Piece piece, uint pieceQuantity) in model.Pieces)
             {
                 if (!Stock.Remove(piece, pieceQuantity))
                 {
@@ -54,7 +23,7 @@ public static class ProductionManager
                     {
                         Stock.Add(pieceQty.Key, pieceQty.Value);
                     }
-                    Logger.PrintError($"Insufficient stock. Produced {i} {spaceship.Name}");
+                    Logger.PrintError($"Insufficient stock. Produced {i} {model.Name}");
                     return;
                 }
 
@@ -67,53 +36,5 @@ public static class ProductionManager
             Stock.Add(newSpaceship, 1);
         }
         Logger.PrintResult("STOCK_UPDATED");
-    }
-
-
-    private static void Instructions(Spaceship spaceship, int quantity)
-    {
-        if (!Stock.Verify(spaceship, quantity))
-        {
-            Logger.PrintError("Unable to start production due to insufficient stock.");
-        }
-
-        for (int i = 0; i < quantity; i++)
-        {
-            Logger.PrintInstruction("PRODUCING", $"{spaceship.Name}");
-
-            foreach (var piece in spaceship.Pieces)
-            {
-                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"{piece.Value} {piece.Key.Name}");
-            }
-
-            bool firstLoop = true;
-            string currentAssembly = "";
-
-            foreach (var piece in spaceship.Pieces)
-            {
-                if (currentAssembly == "")
-                {
-                    //Logger.PrintInstruction("ASSEMBLE", $"{piece.Key.Name}");
-                    currentAssembly = $"{piece.Key.Name}";
-                    firstLoop = false;
-                }
-                else
-                {
-                    if (firstLoop)
-                    {
-                        Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} {piece.Key.Name}");
-                        currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
-                        firstLoop = false;
-                    }
-                    else
-                    {
-                        Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] {piece.Key.Name}");
-                        currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
-                    }
-                }
-            }
-
-            Logger.PrintInstruction("FINISHED", spaceship.Name);
-        }
     }
 }

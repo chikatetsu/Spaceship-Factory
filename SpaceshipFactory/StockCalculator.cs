@@ -28,18 +28,17 @@ public static class StockCalculator
         return totalNeededParts;
     }
 
-    public static void PrintNeededStocks(string[] args)
-    {
-        var spaceshipQuantities = ParseInput(args);
-        foreach ((string? spaceshipName, uint quantity) in spaceshipQuantities)
-        {
-            Logger.PrintResult($"{spaceshipName} {quantity} :");
 
-            Spaceship? spaceship = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == spaceshipName);
-            if (spaceship == null)
-            {
-                continue;
-            }
+    public static void PrintNeededStocks(Dictionary<Spaceship, uint>? spaceshipQuantities)
+    {
+        if (spaceshipQuantities == null)
+        {
+            return;
+        }
+
+        foreach ((Spaceship spaceship, uint quantity) in spaceshipQuantities)
+        {
+            Logger.PrintResult($"{spaceship.Name} {quantity} :");
             foreach (var piece in spaceship.Pieces)
             {
                 for (int i = 0; i < piece.Value * quantity; i++)
@@ -53,53 +52,22 @@ public static class StockCalculator
         PrintTotalStocks(spaceshipQuantities);
     }
 
-    private static Dictionary<string, uint> ParseInput(IReadOnlyList<string> args)
-    {
-        var spaceshipQuantities = new Dictionary<string, uint>();
-        for (int i = 0; i < args.Count; i += 2)
-        {
-            if (!uint.TryParse(args[i], out uint quantity) || quantity < 1)
-            {
-                Logger.PrintError($"Invalid quantity: {args[i]}");
-                continue;
-            }
 
-            string modelName = args[i + 1];
-            if (!InstructionManager.ShipModels.Contains(new Spaceship(modelName)))
-            {
-                Logger.PrintError($"Spaceship model '{modelName}' is not available.");
-                continue;
-            }
-
-            if (!spaceshipQuantities.TryAdd(modelName, quantity))
-            {
-                spaceshipQuantities[modelName] += quantity;
-            }
-        }
-        return spaceshipQuantities;
-    }
-
-
-    private static void PrintTotalStocks(Dictionary<string, uint> spaceshipQuantities)
+    private static void PrintTotalStocks(Dictionary<Spaceship, uint> spaceshipQuantities)
     {
         var totalPartsNeeded = new Dictionary<string, uint>();
 
-        foreach (var kvp in spaceshipQuantities)
+        foreach ((Spaceship? spaceship, uint spaceshipQuantity) in spaceshipQuantities)
         {
-            Spaceship? spaceship = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == kvp.Key);
-            if (spaceship == null)
-            {
-                continue;
-            }
-            foreach ((Piece.Piece? piece, uint quantity) in spaceship.Pieces)
+            foreach ((Piece.Piece? piece, uint pieceQuantity) in spaceship.Pieces)
             {
                 if (totalPartsNeeded.ContainsKey(piece.Name))
                 {
-                    totalPartsNeeded[piece.Name] += quantity * kvp.Value;
+                    totalPartsNeeded[piece.Name] += pieceQuantity * spaceshipQuantity;
                 }
                 else
                 {
-                    totalPartsNeeded[piece.Name] = quantity * kvp.Value;
+                    totalPartsNeeded[piece.Name] = pieceQuantity * spaceshipQuantity;
                 }
             }
         }
