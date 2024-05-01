@@ -148,7 +148,7 @@ public class Parser
         }
         for (int i = 0; i < args.Count; i += 2)
         {
-            if (!int.TryParse(args[i], out _))
+            if (!int.TryParse(args[i], out int quantity) || quantity < 1)
             {
                 Logger.PrintError($"`{args[i]}` is not a valid quantity");
                 return false;
@@ -172,7 +172,7 @@ public class Parser
         }
         for (int i = 0; i < args.Count; i += 2)
         {
-            if (!int.TryParse(args[i], out _))
+            if (!int.TryParse(args[i], out int quantity) || quantity < 1)
             {
                 Logger.PrintError($"`{args[i]}` is not a valid quantity");
                 return false;
@@ -207,7 +207,7 @@ public class Parser
         }
         for (int i = 0; i < args.Count; i += 2)
         {
-            if (!int.TryParse(args[i], out _))
+            if (!int.TryParse(args[i], out int quantity) || quantity < 1)
             {
                 Logger.PrintError($"`{args[i]}` is not a valid quantity");
                 return false;
