@@ -26,7 +26,8 @@ public class Parser
                 break;
             case "INSTRUCTIONS":
                 if (IsInstructionsCommandValid(args)) {
-                    InstructionManager.Init(args);
+                    //InstructionManager.Init(args);
+                    ProductionManager.Produce(args,true);
                 }
                 break;
             case "VERIFY":
@@ -38,7 +39,7 @@ public class Parser
             case "PRODUCE":
                 if (IsProduceCommandValid(args))
                 {
-                    ProductionManager.Produce(args);
+                    ProductionManager.Produce(args,false);
                 }
                 break;
             case "":

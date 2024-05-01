@@ -66,7 +66,7 @@ public static class Stock
             return false;
         }
         
-        Logger.PrintInstruction("GET_OUT_STOCK", $"{quantity} {piece}");
+        //Logger.PrintInstruction("GET_OUT_STOCK", $"{quantity} {piece}");
         Pieces[piece] -= quantity;
         return true;
     }

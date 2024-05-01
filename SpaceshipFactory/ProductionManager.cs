@@ -12,7 +12,7 @@ public static class ProductionManager
     };
 
 
-    public static void Produce(string[] args)
+    public static void Produce(string[] args, bool isInstructions)
     {
         foreach (var shipModel in ShipModels)
         {
@@ -54,7 +54,8 @@ public static class ProductionManager
                 continue;
             }
 
-            Assemble(spaceship, quantity);
+            if(isInstructions) Instructions(spaceship, quantity);
+            else Assemble(spaceship, quantity);
         }
     }
 
@@ -89,10 +90,61 @@ public static class ProductionManager
                         piecesFromStock.Add(piece.Key, piece.Value);
                     }
                 }
-
+                /*
                 foreach (var PieceFromStock in piecesFromStock)
                 {
                     Logger.PrintInstruction("ASSEMBLE", $"{PieceFromStock.Key.Name}");
+                }
+                */
+
+                Logger.PrintResult($"FINISHED {spaceship.Name}");
+            }
+        }
+        else
+        {
+            Logger.PrintError("Unable to start production due to insufficient stock.");
+        }
+    }
+
+    private static void Instructions(Spaceship spaceship, int quantity)
+    {
+        if (Stock.Verify(spaceship, quantity))
+        {
+            for (int i = 0; i < quantity; i++)
+            {
+                Logger.PrintInstruction("PRODUCING", $"{spaceship.Name}");
+
+                foreach (var piece in spaceship.Pieces)
+                {
+                    Logger.PrintInstruction("GET_OUT_OF_STOCK", $"{piece.Value} {piece.Key.Name}");
+                }
+
+                bool firstLoop = true;
+                string currentAssembly = "";
+
+                foreach (var piece in spaceship.Pieces)
+                {
+                    if (currentAssembly == "")
+                    {
+                        //Logger.PrintInstruction("ASSEMBLE", $"{piece.Key.Name}");
+                        currentAssembly = $"{piece.Key.Name}";
+                        firstLoop = false;
+                    }
+                    else
+                    {
+                        if (firstLoop)
+                        {
+                            Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} {piece.Key.Name}");
+                            currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
+                            firstLoop = false;
+                        }
+                        else
+                        {
+                            Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] {piece.Key.Name}");
+                            currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
+                        }
+                        
+                    }
                 }
 
                 Logger.PrintResult($"FINISHED {spaceship.Name}");
