@@ -46,26 +46,29 @@ public class InstructionManager
 
             foreach (var piece in spaceship.Pieces)
             {
-                if (currentAssembly == "")
+                for(int pieceQuantity = 0; pieceQuantity < piece.Value; pieceQuantity++)
                 {
-                    //Logger.PrintInstruction("ASSEMBLE", $"{piece.Key.Name}");
-                    currentAssembly = $"{piece.Key.Name}";
-                    firstLoop = false;
-                }
-                else
-                {
-                    if (firstLoop)
+                    if (currentAssembly == "")
                     {
-                        Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} {piece.Key.Name}");
-                        currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
-                        firstLoop = false;
+                        //Logger.PrintInstruction("ASSEMBLE", $"{piece.Key.Name}");
+                        currentAssembly = $"{piece.Key.Name}";
                     }
                     else
                     {
-                        Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] {piece.Key.Name}");
-                        currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
+                        if (firstLoop)
+                        {
+                            Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} {piece.Key.Name}");
+                            currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
+                            firstLoop = false;
+                        }
+                        else
+                        {
+                            Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] {piece.Key.Name}");
+                            currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
+                        }
                     }
                 }
+                
             }
 
             Logger.PrintInstruction("FINISHED", spaceship.Name);
