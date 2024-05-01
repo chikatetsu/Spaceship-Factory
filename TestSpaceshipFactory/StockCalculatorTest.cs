@@ -8,10 +8,10 @@
             var spaceshipNames = new[] { "Explorer" };
             var result = StockCalculator.CalculateNeededStocks(spaceshipNames);
 
-            Assert.Equal(1, result["Hull_HE1"]);
-            Assert.Equal(1, result["Engine_EE1"]);
-            Assert.Equal(1, result["Wings_WE1"]);
-            Assert.Equal(1, result["Thruster_TE1"]);
+            Assert.Equal(1, (int)result["Hull_HE1"]);
+            Assert.Equal(1, (int)result["Engine_EE1"]);
+            Assert.Equal(1, (int)result["Wings_WE1"]);
+            Assert.Equal(1, (int)result["Thruster_TE1"]);
         }
 
         [Fact]
@@ -20,14 +20,14 @@
             var spaceshipNames = new[] { "Explorer", "Speeder" };
             var result = StockCalculator.CalculateNeededStocks(spaceshipNames);
 
-            Assert.Equal(1, result["Hull_HE1"]);
-            Assert.Equal(1, result["Engine_EE1"]);
-            Assert.Equal(1, result["Wings_WE1"]);
-            Assert.Equal(1, result["Thruster_TE1"]);
-            Assert.Equal(1, result["Hull_HS1"]);
-            Assert.Equal(1, result["Engine_ES1"]);
-            Assert.Equal(1, result["Wings_WS1"]);
-            Assert.Equal(2, result["Thruster_TS1"]);
+            Assert.Equal(1, (int)result["Hull_HE1"]);
+            Assert.Equal(1, (int)result["Engine_EE1"]);
+            Assert.Equal(1, (int)result["Wings_WE1"]);
+            Assert.Equal(1, (int)result["Thruster_TE1"]);
+            Assert.Equal(1, (int)result["Hull_HS1"]);
+            Assert.Equal(1, (int)result["Engine_ES1"]);
+            Assert.Equal(1, (int)result["Wings_WS1"]);
+            Assert.Equal(2, (int)result["Thruster_TS1"]);
         }
 
         [Fact]

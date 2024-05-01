@@ -4,51 +4,24 @@ namespace SpaceshipFactory;
 
 public static class StockCalculator
 {
-    private static readonly Dictionary<string, Spaceship> SpaceshipModels = new()
+    public static Dictionary<string, uint> CalculateNeededStocks(string[] spaceshipNames)
     {
-        ["Explorer"] = new Spaceship("Explorer")
-            .AddPiece(new Hull("Hull_HE1"), 1)
-            .AddPiece(new Engine("Engine_EE1"), 1)
-            .AddPiece(new Wings("Wings_WE1"), 1)
-            .AddPiece(new Thruster("Thruster_TE1"), 1),
-        ["Speeder"] = new Spaceship("Speeder")
-            .AddPiece(new Hull("Hull_HS1"), 1)
-            .AddPiece(new Engine("Engine_ES1"), 1)
-            .AddPiece(new Wings("Wings_WS1"), 1)
-            .AddPiece(new Thruster("Thruster_TS1"), 2),
-        ["Cargo"] = new Spaceship("Cargo")
-            .AddPiece(new Hull("Hull_HC1"), 1)
-            .AddPiece(new Engine("Engine_EC1"), 1)
-            .AddPiece(new Wings("Wings_WC1"), 1)
-            .AddPiece(new Thruster("Thruster_TC1"), 1)
-    };
-
-
-    public static Dictionary<string, int> CalculateNeededStocks(string[] spaceshipNames)
-    {
-        var totalNeededParts = new Dictionary<string, int>();
+        var totalNeededParts = new Dictionary<string, uint>();
 
         foreach (var name in spaceshipNames)
         {
-            if (SpaceshipModels.TryGetValue(name, out var spaceshipModel))
-            {
-                foreach (var piece in spaceshipModel.Pieces)
-                {
-                    int pieceCount = (int)piece.Value;
-
-                    if (totalNeededParts.ContainsKey(piece.Key.Name))
-                    {
-                        totalNeededParts[piece.Key.Name] += pieceCount;
-                    }
-                    else
-                    {
-                        totalNeededParts[piece.Key.Name] = pieceCount;
-                    }
-                }
-            }
-            else
+            Spaceship? spaceship = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == name);
+            if (spaceship == null)
             {
                 Logger.PrintError($"Unknown spaceship model: {name}");
+                continue;
+            }
+            foreach ((Piece.Piece? piece, uint pieceCount) in spaceship.Pieces)
+            {
+                if (!totalNeededParts.TryAdd(piece.Name, pieceCount))
+                {
+                    totalNeededParts[piece.Name] += pieceCount;
+                }
             }
         }
 
@@ -58,13 +31,15 @@ public static class StockCalculator
     public static void PrintNeededStocks(string[] args)
     {
         var spaceshipQuantities = ParseInput(args);
-        foreach (var entry in spaceshipQuantities)
+        foreach ((string? spaceshipName, uint quantity) in spaceshipQuantities)
         {
-            string spaceshipName = entry.Key;
-            int quantity = entry.Value;
             Logger.PrintResult($"{spaceshipName} {quantity} :");
 
-            var spaceship = SpaceshipModels[spaceshipName];
+            Spaceship? spaceship = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == spaceshipName);
+            if (spaceship == null)
+            {
+                continue;
+            }
             foreach (var piece in spaceship.Pieces)
             {
                 for (int i = 0; i < piece.Value * quantity; i++)
@@ -78,52 +53,53 @@ public static class StockCalculator
         PrintTotalStocks(spaceshipQuantities);
     }
 
-    private static Dictionary<string, int> ParseInput(string[] args)
+    private static Dictionary<string, uint> ParseInput(IReadOnlyList<string> args)
     {
-        var spaceshipQuantities = new Dictionary<string, int>();
-        for (int i = 0; i < args.Length; i += 2)
+        var spaceshipQuantities = new Dictionary<string, uint>();
+        for (int i = 0; i < args.Count; i += 2)
         {
-            if (!int.TryParse(args[i], out int quantity) || quantity < 1)
+            if (!uint.TryParse(args[i], out uint quantity) || quantity < 1)
             {
                 Logger.PrintError($"Invalid quantity: {args[i]}");
                 continue;
             }
 
             string modelName = args[i + 1];
-            if (!SpaceshipModels.ContainsKey(modelName))
+            if (!InstructionManager.ShipModels.Contains(new Spaceship(modelName)))
             {
-                Logger.PrintError($"Unknown spaceship model: {modelName}");
+                Logger.PrintError($"Spaceship model '{modelName}' is not available.");
                 continue;
             }
 
-            if (spaceshipQuantities.ContainsKey(modelName))
+            if (!spaceshipQuantities.TryAdd(modelName, quantity))
             {
                 spaceshipQuantities[modelName] += quantity;
-            }
-            else
-            {
-                spaceshipQuantities[modelName] = quantity;
             }
         }
         return spaceshipQuantities;
     }
-    private static void PrintTotalStocks(Dictionary<string, int> spaceshipQuantities)
+
+
+    private static void PrintTotalStocks(Dictionary<string, uint> spaceshipQuantities)
     {
-        var totalPartsNeeded = new Dictionary<string, int>();
+        var totalPartsNeeded = new Dictionary<string, uint>();
 
         foreach (var kvp in spaceshipQuantities)
         {
-            var spaceship = SpaceshipModels[kvp.Key];
-            foreach (var piece in spaceship.Pieces)
+            Spaceship? spaceship = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == kvp.Key);
+            if (spaceship == null)
             {
-                var pieceCount = (int)piece.Value;
-                if (totalPartsNeeded.ContainsKey(piece.Key.Name))
+                continue;
+            }
+            foreach ((Piece.Piece? piece, uint quantity) in spaceship.Pieces)
+            {
+                if (totalPartsNeeded.ContainsKey(piece.Name))
                 {
-                    totalPartsNeeded[piece.Key.Name] += pieceCount * kvp.Value;
+                    totalPartsNeeded[piece.Name] += quantity * kvp.Value;
                 }
                 else
                 {
-                    totalPartsNeeded[piece.Key.Name] = pieceCount * kvp.Value;
+                    totalPartsNeeded[piece.Name] = quantity * kvp.Value;
                 }
             }
         }

@@ -74,21 +74,21 @@ public static class Stock
     public static string GetStocks()
     {
         string str = "";
-        foreach (var kv in Spaceships)
+        foreach ((Spaceship spaceship, uint quantity) in Spaceships)
         {
-            if (kv.Value == 0)
+            if (quantity == 0)
             {
                 continue;
             }
-            str += $"{kv.Value} {kv.Key}\n";
+            str += $"{quantity} {spaceship}\n";
         }
-        foreach (var kv in Pieces)
+        foreach ((Piece.Piece piece, uint quantity) in Pieces)
         {
-            if (kv.Value == 0)
+            if (quantity == 0)
             {
                 continue;
             }
-            str += $"{kv.Value} {kv.Key}\n";
+            str += $"{quantity} {piece}\n";
         }
         return str;
     }
