@@ -47,4 +47,18 @@ public class Spaceship
     {
         return Name;
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is Spaceship spaceship)
+        {
+            return Name == spaceship.Name;
+        }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return Name.GetHashCode();
+    }
 }

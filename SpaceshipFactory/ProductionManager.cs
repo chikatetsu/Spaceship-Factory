@@ -84,13 +84,9 @@ public static class ProductionManager
                     return;
                 }
 
-                if (newSpaceship.Pieces.ContainsKey(piece))
+                if (!newSpaceship.Pieces.TryAdd(piece, pieceQuantity))
                 {
                     newSpaceship.Pieces[piece] += pieceQuantity;
-                }
-                else
-                {
-                    newSpaceship.Pieces.Add(piece, pieceQuantity);
                 }
             }
 
@@ -98,6 +94,7 @@ public static class ProductionManager
         }
         Logger.PrintResult("STOCK_UPDATED");
     }
+
 
     private static void Instructions(Spaceship spaceship, int quantity)
     {
@@ -142,7 +139,7 @@ public static class ProductionManager
                 }
             }
 
-            Logger.PrintResult($"FINISHED {spaceship.Name}");
+            Logger.PrintInstruction("FINISHED", spaceship.Name);
         }
     }
 }
