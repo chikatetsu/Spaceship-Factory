@@ -7,9 +7,16 @@ public class Parser
     public void Parse(string input)
     {
         string[] split = FormatInput(input);
+        if (split.Length == 0)
+        {
+            Logger.PrintError("No command entered.");
+            return;
+        }
+
         string command = split[0];
         string[] args = split[1..];
         Dictionary<Spaceship, uint>? modelQuantity;
+        Logger.PrintDebug($"Command: {command}, Args: {string.Join(" ", args)}");
 
         switch (command)
         {
@@ -59,20 +66,36 @@ public class Parser
                 break;
         }
     }
-
-
+    
     private string[] FormatInput(string input)
     {
         input = input.Trim().Replace("  ", " ");
-        if (!input.StartsWith(","))
-        {
-            input = input.Replace(",", "");
-        }
-        string[] split = input.Split(" ");
-        split[0] = split[0].ToUpper();
-        return split;
-    }
+        string[] split;
 
+        split = input.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+
+        if (split.Length == 0)
+        {
+            return Array.Empty<string>();
+        }
+
+        string command = split[0].ToUpper();
+        string[] args = split.Length > 1 ? split[1].Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries) : Array.Empty<string>();
+
+        List<string> allArgs = new();
+        foreach (var arg in args)
+        {
+            allArgs.AddRange(arg.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        }
+
+        string[] result = new string[allArgs.Count + 1];
+        result[0] = command;
+        allArgs.CopyTo(result, 1);
+
+        Logger.PrintDebug($"Formatted Input: Command - {command}, Args - {string.Join(" ", allArgs)}");
+
+        return result;
+    }
 
     private void VerifyCommand(string[] args)
     {
