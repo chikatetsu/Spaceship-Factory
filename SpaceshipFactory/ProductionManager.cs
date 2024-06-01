@@ -6,22 +6,23 @@ public static class ProductionManager
 {
     public static void Produce(Spaceship model, uint quantityToProduce)
     {
-        if (!Stock.IsStockSufficient(model, quantityToProduce))
+        var stock = Stock.Instance;
+        if (!stock.IsStockSufficient(model, quantityToProduce))
         {
             Logger.PrintError("Unable to start production due to insufficient stock");
         }
 
-        for (int i = 0; i < quantityToProduce; i++)
+        for (var i = 0; i < quantityToProduce; i++)
         {
             Spaceship newSpaceship = new(model.Name);
 
             foreach ((Piece.Piece piece, uint pieceQuantity) in model.Pieces)
             {
-                if (!Stock.Remove(piece, pieceQuantity))
+                if (!stock.Remove(piece, pieceQuantity))
                 {
                     foreach (var pieceQty in newSpaceship.Pieces)
                     {
-                        Stock.Add(pieceQty.Key, pieceQty.Value);
+                        stock.Add(pieceQty.Key, pieceQty.Value);
                     }
                     Logger.PrintError($"Insufficient stock. Produced {i} {model.Name}");
                     return;
@@ -33,7 +34,7 @@ public static class ProductionManager
                 }
             }
 
-            Stock.Add(newSpaceship, 1);
+            stock.Add(newSpaceship, 1);
         }
         Logger.PrintResult("STOCK_UPDATED");
     }

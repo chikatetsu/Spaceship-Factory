@@ -2,56 +2,79 @@ using SpaceshipFactory.Piece;
 
 namespace SpaceshipFactory;
 
-public static class Stock
+public class Stock
 {
-    private static readonly Dictionary<Spaceship, uint> Spaceships = new();
-    private static readonly Dictionary<Piece.Piece, uint> Pieces = new()
-    {
-        { new Engine("Engine_EE1"), 5 },
-        { new Engine("Engine_ES1"), 9 },
-        { new Engine("Engine_EC1"), 11 },
-        { new Hull("Hull_HE1"), 10 },
-        { new Hull("Hull_HS1"), 15 },
-        { new Hull("Hull_HC1"), 0 },
-        { new Thruster("Thruster_TE1"), 20 },
-        { new Thruster("Thruster_TS1"), 5 },
-        { new Thruster("Thruster_TC1"), 18 },
-        { new Wings("Wings_WE1"), 32 },
-        { new Wings("Wings_WS1"), 16 },
-        { new Wings("Wings_WC1"), 24 },
-    };
+    private static Stock? _instance;
+    private static readonly object _lock = new object();
+    private readonly Dictionary<Spaceship, uint> _spaceships;
+    private readonly Dictionary<Piece.Piece, uint> _pieces;
 
-    public static bool Add(Spaceship spaceship, uint quantity)
+    private Stock()
+    {
+        _spaceships = new Dictionary<Spaceship, uint>();
+        _pieces = new Dictionary<Piece.Piece, uint>
+        {
+            { new Engine("Engine_EE1"), 5 },
+            { new Engine("Engine_ES1"), 9 },
+            { new Engine("Engine_EC1"), 11 },
+            { new Hull("Hull_HE1"), 10 },
+            { new Hull("Hull_HS1"), 15 },
+            { new Hull("Hull_HC1"), 0 },
+            { new Thruster("Thruster_TE1"), 20 },
+            { new Thruster("Thruster_TS1"), 5 },
+            { new Thruster("Thruster_TC1"), 18 },
+            { new Wings("Wings_WE1"), 32 },
+            { new Wings("Wings_WS1"), 16 },
+            { new Wings("Wings_WC1"), 24 },
+        };
+    }
+    
+    public static Stock Instance
+    {
+        get
+        {
+            lock (_lock)
+            {
+                if (_instance == null)
+                {
+                    _instance = new Stock();
+                }
+                return _instance;
+            }
+        }
+    }
+    
+
+    public bool Add(Spaceship spaceship, uint quantity)
     {
         if (quantity == 0)
         {
             return false;
         }
-        if (!Spaceships.TryAdd(spaceship, quantity))
+        if (!_spaceships.TryAdd(spaceship, quantity))
         {
-            Spaceships[spaceship] += quantity;
+            _spaceships[spaceship] += quantity;
         }
 
         return true;
     }
     
-    public static bool Add(Piece.Piece piece, uint quantity)
+    public bool Add(Piece.Piece piece, uint quantity)
     {
         if (quantity == 0)
         {
             return false;
         }
-        if (!Pieces.TryAdd(piece, quantity))
+        if (!_pieces.TryAdd(piece, quantity))
         {
-            Pieces[piece] += quantity;
+            _pieces[piece] += quantity;
         }
-
         return true;
     }
     
-    public static bool Remove(Piece.Piece piece, uint quantity)
+    public bool Remove(Piece.Piece piece, uint quantity)
     {
-        if (!Pieces.ContainsKey(piece))
+        if (!_pieces.ContainsKey(piece))
         {
             Logger.PrintError($"Piece {piece} is not in stock.");
             return false;
@@ -60,21 +83,21 @@ public static class Stock
         {
             return false;
         }
-        if (Pieces[piece] < quantity)
+        if (_pieces[piece] < quantity)
         {
             Logger.PrintError($"Not enough {piece} in stock.");
             return false;
         }
         
         //Logger.PrintInstruction("GET_OUT_STOCK", $"{quantity} {piece}");
-        Pieces[piece] -= quantity;
+        _pieces[piece] -= quantity;
         return true;
     }
 
-    public static string GetStocks()
+    public string GetStocks()
     {
         string str = "";
-        foreach ((Spaceship spaceship, uint quantity) in Spaceships)
+        foreach ((Spaceship spaceship, uint quantity) in _spaceships)
         {
             if (quantity == 0)
             {
@@ -82,7 +105,7 @@ public static class Stock
             }
             str += $"{quantity} {spaceship}\n";
         }
-        foreach ((Piece.Piece piece, uint quantity) in Pieces)
+        foreach ((Piece.Piece piece, uint quantity) in _pieces)
         {
             if (quantity == 0)
             {
@@ -93,15 +116,15 @@ public static class Stock
         return str;
     }
 
-    public static bool IsStockSufficient(Spaceship model, uint spaceshipQuantity)
+    public bool IsStockSufficient(Spaceship model, uint spaceshipQuantity)
     {
         foreach ((Piece.Piece? piece, uint pieceQuantity) in model.Pieces)
         {
-            if (!Pieces.ContainsKey(piece))
+            if (!_pieces.ContainsKey(piece))
             {
                 return false;
             }
-            if (Pieces[piece] < pieceQuantity * spaceshipQuantity)
+            if (_pieces[piece] < pieceQuantity * spaceshipQuantity)
             {
                 return false;
             }

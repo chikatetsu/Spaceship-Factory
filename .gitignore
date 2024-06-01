@@ -10,3 +10,5 @@ SpaceshipFactory/obj/
 TestSpaceshipFactory/bin/
 
 TestSpaceshipFactory/obj/
+
+.DS_Store
