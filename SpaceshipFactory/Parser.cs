@@ -16,7 +16,7 @@ public class Parser
             case "STOCKS":
                 if (IsStocksCommandValid(args.Length))
                 {
-                    Logger.PrintResult(Stock.GetStocks());
+                    Logger.PrintResult(Stock.Instance.GetStocks());
                 }
                 break;
             case "NEEDED_STOCKS":
@@ -109,6 +109,7 @@ public class Parser
             case "PRODUCE":
                 if (IsProduceCommandValid(args))
                 {
+                    var stock = Stock.Instance;
                     for (int i = 0; i < args.Length; i += 2)
                     {
                         if (!uint.TryParse(args[i], out uint quantity) || quantity < 1)
@@ -117,11 +118,9 @@ public class Parser
                         }
                         Spaceship spaceship = new Spaceship(args[i + 1]);
 
-                        if (!Stock.IsStockSufficient(spaceship, quantity))
-                        {
-                            Logger.PrintResult("UNAVAILABLE");
-                            return;
-                        }
+                        if (stock.IsStockSufficient(spaceship, quantity)) continue;
+                        Logger.PrintResult("UNAVAILABLE");
+                        return;
                     }
                     Logger.PrintResult("AVAILABLE");
                 }
