@@ -38,4 +38,18 @@ public static class ProductionManager
         }
         Logger.PrintResult("STOCK_UPDATED");
     }
+    
+    public static Spaceship? CreateSpaceship(string type)
+    {
+        ISpaceshipFactory? factory = type switch
+        {
+            "Explorer" => new ExplorerFactory(),
+            "Speeder" => new SpeederFactory(),
+            "Cargo" => new CargoFactory(),
+            _ => null
+        };
+
+        return factory?.CreateSpaceship();
+    }
+    
 }
