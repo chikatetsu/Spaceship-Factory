@@ -31,4 +31,11 @@ public static class Logger
         Console.WriteLine(message);
         InitCommandColor();
     }
+
+    public static void PrintDebug(string s)
+    {
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine(s);
+        InitCommandColor();
+    }
 }
