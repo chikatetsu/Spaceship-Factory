@@ -10,7 +10,10 @@ public static class StockCalculator
 
         foreach (var name in spaceshipNames)
         {
-            Spaceship? spaceship = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == name);
+            var spaceship = InstructionManager.ShipFactories
+                .Select(factory => factory.CreateSpaceship())
+                .FirstOrDefault(spaceship => spaceship.Name == name);
+            
             if (spaceship == null)
             {
                 Logger.PrintError($"Unknown spaceship model: {name}");

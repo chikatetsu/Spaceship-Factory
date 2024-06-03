@@ -273,7 +273,7 @@ public class Parser
 
             string modelName = args[i + 1];
 
-            Spaceship? model = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == modelName);
+            Spaceship? model = ProductionManager.CreateSpaceship(modelName);
             if (model == null)
             {
                 Logger.PrintError($"Spaceship model '{modelName}' is not available.");
