@@ -59,6 +59,9 @@ public class Parser
                     }
                 }
                 break;
+            case "ADD_TEMPLATE":
+                AddTemplateCommand(args);
+                break;
             case "":
                 break;
             default:
@@ -153,7 +156,36 @@ public class Parser
                 break;
         }
     }
+    
+    
+    private static void AddTemplateCommand(string[] args)
+    {
+        if (args.Length < 2)
+        {
+            Logger.PrintError("Invalid ADD_TEMPLATE command arguments");
+            return;
+        }
 
+        string templateName = args[0];
+        var pieces = new Dictionary<Piece.Piece, uint>();
+    
+        for (int i = 1; i < args.Length; i++)
+        {
+            Piece.Piece? piece = PieceFactory.CreatePiece(args[i]);
+            if (piece == null)
+            {
+                Logger.PrintError($"Unknown piece type: {args[i]}");
+                return;
+            }
+
+            if (!pieces.TryAdd(piece, 1))
+            {
+                pieces[piece] += 1;
+            }
+        }
+
+        ProductionManager.AddTemplate(templateName, pieces);
+    }
 
     private bool IsStocksCommandValid(int argsLength)
     {
@@ -273,7 +305,7 @@ public class Parser
 
             string modelName = args[i + 1];
 
-            Spaceship? model = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == modelName);
+            Spaceship? model = ProductionManager.CreateSpaceship(modelName);
             if (model == null)
             {
                 Logger.PrintError($"Spaceship model '{modelName}' is not available.");
