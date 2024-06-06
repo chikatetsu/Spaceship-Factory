@@ -1,59 +1,110 @@
 ﻿using SpaceshipFactory.Piece;
+using System.Collections.Generic;
 
-namespace SpaceshipFactory;
-
-public class InstructionManager
+namespace SpaceshipFactory
 {
-    public static readonly List<ISpaceshipFactory> ShipFactories = new()
+    public class InstructionManager
     {
-        new ExplorerFactory(),
-        new SpeederFactory(),
-        new CargoFactory()
-    };
-
-
-    public static void PrintInstructions(Spaceship spaceship, uint quantity)
-    {
-        for (int i = 0; i < quantity; i++)
+        public static readonly List<ISpaceshipFactory> ShipFactories = new()
         {
-            Logger.PrintInstruction("PRODUCING", $"{spaceship.Name}");
+            new ExplorerFactory(),
+            new SpeederFactory(),
+            new CargoFactory()
+        };
 
-            foreach (var piece in spaceship.Pieces)
+        public static void PrintInstructions(Spaceship spaceship, uint quantity)
+        {
+            for (int i = 0; i < quantity; i++)
             {
-                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"{piece.Value} {piece.Key.Name}");
-            }
+                Logger.PrintInstruction("PRODUCING", $"{spaceship.Name}");
 
-            bool firstLoop = true;
-            string currentAssembly = "";
-
-            foreach (var piece in spaceship.Pieces)
-            {
-                for(int pieceQuantity = 0; pieceQuantity < piece.Value; pieceQuantity++)
+                if (spaceship.Hull != null)
                 {
-                    if (currentAssembly == "")
+                    Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {spaceship.Hull.Name}");
+                }
+
+                foreach (var engine in spaceship.Engines)
+                {
+                    Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {engine.Name}");
+                }
+
+                foreach (var wings in spaceship.Wings)
+                {
+                    Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {wings.Name}");
+                }
+
+                foreach (var thruster in spaceship.Thrusters)
+                {
+                    Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {thruster.Name}");
+                }
+
+                bool firstLoop = true;
+                string currentAssembly = "";
+
+                if (spaceship.Hull != null)
+                {
+                    currentAssembly = spaceship.Hull.Name;
+                }
+
+                foreach (var engine in spaceship.Engines)
+                {
+                    if (firstLoop && string.IsNullOrEmpty(currentAssembly))
                     {
-                        //Logger.PrintInstruction("ASSEMBLE", $"{piece.Key.Name}");
-                        currentAssembly = $"{piece.Key.Name}";
+                        currentAssembly = engine.Name;
+                    }
+                    else if (firstLoop)
+                    {
+                        Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} + {engine.Name}");
+                        currentAssembly += $", {engine.Name}";
+                        firstLoop = false;
                     }
                     else
                     {
-                        if (firstLoop)
-                        {
-                            Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} {piece.Key.Name}");
-                            currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
-                            firstLoop = false;
-                        }
-                        else
-                        {
-                            Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] {piece.Key.Name}");
-                            currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
-                        }
+                        Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] + {engine.Name}");
+                        currentAssembly += $", {engine.Name}";
                     }
                 }
-                
-            }
 
-            Logger.PrintInstruction("FINISHED", spaceship.Name);
+                foreach (var wings in spaceship.Wings)
+                {
+                    if (firstLoop && string.IsNullOrEmpty(currentAssembly))
+                    {
+                        currentAssembly = wings.Name;
+                    }
+                    else if (firstLoop)
+                    {
+                        Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} + {wings.Name}");
+                        currentAssembly += $", {wings.Name}";
+                        firstLoop = false;
+                    }
+                    else
+                    {
+                        Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] + {wings.Name}");
+                        currentAssembly += $", {wings.Name}";
+                    }
+                }
+
+                foreach (var thruster in spaceship.Thrusters)
+                {
+                    if (firstLoop && string.IsNullOrEmpty(currentAssembly))
+                    {
+                        currentAssembly = thruster.Name;
+                    }
+                    else if (firstLoop)
+                    {
+                        Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} + {thruster.Name}");
+                        currentAssembly += $", {thruster.Name}";
+                        firstLoop = false;
+                    }
+                    else
+                    {
+                        Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] + {thruster.Name}");
+                        currentAssembly += $", {thruster.Name}";
+                    }
+                }
+
+                Logger.PrintInstruction("FINISHED", spaceship.Name);
+            }
         }
     }
 }

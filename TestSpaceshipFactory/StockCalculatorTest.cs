@@ -35,7 +35,10 @@ public class StockCalculatorTest
     [Fact]
     public void PrintNeededStocks_WritesExpectedOutputForSingleSpaceship()
     {
-        Spaceship? spaceship = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == "Explorer");
+        Spaceship? spaceship = InstructionManager.ShipFactories
+            .Select(factory => factory.CreateSpaceship())
+            .FirstOrDefault(spaceship => spaceship.Name == "Explorer");
+        
         if (spaceship == null)
         {
             throw new Exception("Spaceship not found");

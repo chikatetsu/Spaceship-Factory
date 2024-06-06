@@ -1,76 +1,108 @@
 using SpaceshipFactory.Piece;
+using System.Collections.Generic;
 
-namespace SpaceshipFactory;
-
-public static class ProductionManager
+namespace SpaceshipFactory
 {
-    private static Dictionary<string, Spaceship> _customTemplates = new();
-
-    public static void Produce(Spaceship model, uint quantityToProduce)
+    public static class ProductionManager
     {
-        var stock = Stock.Instance;
-        if (!stock.IsStockSufficient(model, quantityToProduce))
-        {
-            Logger.PrintError("Unable to start production due to insufficient stock");
-        }
+        private static Dictionary<string, Spaceship> _customTemplates = new();
 
-        for (var i = 0; i < quantityToProduce; i++)
+        public static void Produce(Spaceship model, uint quantityToProduce)
         {
-            Spaceship newSpaceship = new(model.Name);
-
-            foreach ((Piece.Piece piece, uint pieceQuantity) in model.Pieces)
+            var stock = Stock.Instance;
+            if (!stock.IsStockSufficient(model, quantityToProduce))
             {
-                if (!stock.Remove(piece, pieceQuantity))
+                Logger.PrintError("Unable to start production due to insufficient stock");
+                return;
+            }
+
+            for (var i = 0; i < quantityToProduce; i++)
+            {
+                Spaceship newSpaceship = new(model.Name);
+
+                foreach (var piece in model.Engines)
                 {
-                    foreach (var pieceQty in newSpaceship.Pieces)
+                    if (!newSpaceship.AddPiece(piece))
                     {
-                        stock.Add(pieceQty.Key, pieceQty.Value);
+                        Logger.PrintError($"Failed to add {piece.GetType().Name}");
+                        return;
                     }
-                    Logger.PrintError($"Insufficient stock. Produced {i} {model.Name}");
+                }
+                foreach (var piece in model.Wings)
+                {
+                    if (!newSpaceship.AddPiece(piece))
+                    {
+                        Logger.PrintError($"Failed to add {piece.GetType().Name}");
+                        return;
+                    }
+                }
+                foreach (var piece in model.Thrusters)
+                {
+                    if (!newSpaceship.AddPiece(piece))
+                    {
+                        Logger.PrintError($"Failed to add {piece.GetType().Name}");
+                        return;
+                    }
+                }
+                if (model.Hull != null)
+                {
+                    newSpaceship.AddPiece(model.Hull);
+                }
+
+                if (!newSpaceship.IsValid())
+                {
+                    Logger.PrintError($"Invalid spaceship configuration for {newSpaceship.Name}");
                     return;
                 }
 
-                if (!newSpaceship.Pieces.TryAdd(piece, pieceQuantity))
-                {
-                    newSpaceship.Pieces[piece] += pieceQuantity;
-                }
+                stock.Add(newSpaceship, 1);
+            }
+            Logger.PrintResult("STOCK_UPDATED");
+        }
+
+        public static Spaceship? CreateSpaceship(string type)
+        {
+            if (_customTemplates.TryGetValue(type, out Spaceship? customTemplate))
+            {
+                Spaceship newSpaceship = new(customTemplate.Name);
+                foreach (var piece in customTemplate.Engines) newSpaceship.AddPiece(piece);
+                foreach (var piece in customTemplate.Wings) newSpaceship.AddPiece(piece);
+                foreach (var piece in customTemplate.Thrusters) newSpaceship.AddPiece(piece);
+                if (customTemplate.Hull != null) newSpaceship.AddPiece(customTemplate.Hull);
+                return newSpaceship;
             }
 
-            stock.Add(newSpaceship, 1);
-        }
-        Logger.PrintResult("STOCK_UPDATED");
-    }
-    
-    public static Spaceship? CreateSpaceship(string type)
-    {
-        if (_customTemplates.TryGetValue(type, out Spaceship? customTemplate))
-        {
-            return new Spaceship(customTemplate.Name, new Dictionary<Piece.Piece, uint>(customTemplate.Pieces));
+            ISpaceshipFactory? factory = type switch
+            {
+                "Explorer" => new ExplorerFactory(),
+                "Speeder" => new SpeederFactory(),
+                "Cargo" => new CargoFactory(),
+                _ => null
+            };
+
+            return factory?.CreateSpaceship();
         }
 
-        ISpaceshipFactory? factory = type switch
+        public static void AddTemplate(string name, List<Piece.Piece> pieces)
         {
-            "Explorer" => new ExplorerFactory(),
-            "Speeder" => new SpeederFactory(),
-            "Cargo" => new CargoFactory(),
-            _ => null
-        };
-
-        return factory?.CreateSpaceship();
-    }
-    
-    public static void AddTemplate(string name, Dictionary<Piece.Piece, uint> pieces)
-    {
-        Spaceship newTemplate = new(name, pieces);
-        if (newTemplate.Validate())
-        {
-            _customTemplates[name] = newTemplate;
-            Logger.PrintResult($"Template {name} added successfully.");
-        }
-        else
-        {
-            Logger.PrintError($"Template {name} is invalid and cannot be added.");
+            Spaceship newTemplate = new(name);
+            foreach (var piece in pieces)
+            {
+                if (!newTemplate.AddPiece(piece))
+                {
+                    Logger.PrintError($"Failed to add {piece.GetType().Name} to template {name}");
+                    return;
+                }
+            }
+            if (newTemplate.IsValid())
+            {
+                _customTemplates[name] = newTemplate;
+                Logger.PrintResult($"Template {name} added successfully.");
+            }
+            else
+            {
+                Logger.PrintError($"Template {name} is invalid and cannot be added.");
+            }
         }
     }
-    
 }

@@ -50,15 +50,15 @@ public class Parser
                 }
                 break;
             case "PRODUCE":
-                modelQuantity = MapArgsToQuantityOfSpaceship(args);
-                if (modelQuantity != null)
-                {
-                    foreach ((Spaceship model, uint quantity) in modelQuantity)
+                    var production = MapArgsToQuantityOfSpaceship(args);
+                    if (production != null)
                     {
-                        ProductionManager.Produce(model, quantity);
+                        foreach (var (model, quantity) in production)
+                        {
+                            ProductionManager.Produce(model, quantity);
+                        }
                     }
-                }
-                break;
+                    break;
             case "ADD_TEMPLATE":
                 AddTemplateCommand(args);
                 break;
@@ -167,8 +167,8 @@ public class Parser
         }
 
         string templateName = args[0];
-        var pieces = new Dictionary<Piece.Piece, uint>();
-    
+        var pieces = new List<Piece.Piece>();
+
         for (int i = 1; i < args.Length; i++)
         {
             Piece.Piece? piece = PieceFactory.CreatePiece(args[i]);
@@ -178,10 +178,7 @@ public class Parser
                 return;
             }
 
-            if (!pieces.TryAdd(piece, 1))
-            {
-                pieces[piece] += 1;
-            }
+            pieces.Add(piece);
         }
 
         ProductionManager.AddTemplate(templateName, pieces);

@@ -118,17 +118,38 @@ public class Stock
 
     public bool IsStockSufficient(Spaceship model, uint spaceshipQuantity)
     {
-        foreach ((Piece.Piece? piece, uint pieceQuantity) in model.Pieces)
+        if (model.Hull != null)
         {
-            if (!_pieces.ContainsKey(piece))
-            {
-                return false;
-            }
-            if (_pieces[piece] < pieceQuantity * spaceshipQuantity)
+            if (!_pieces.ContainsKey(model.Hull) || _pieces[model.Hull] < spaceshipQuantity)
             {
                 return false;
             }
         }
+
+        foreach (var engine in model.Engines)
+        {
+            if (!_pieces.ContainsKey(engine) || _pieces[engine] < spaceshipQuantity)
+            {
+                return false;
+            }
+        }
+
+        foreach (var wings in model.Wings)
+        {
+            if (!_pieces.ContainsKey(wings) || _pieces[wings] < spaceshipQuantity)
+            {
+                return false;
+            }
+        }
+
+        foreach (var thruster in model.Thrusters)
+        {
+            if (!_pieces.ContainsKey(thruster) || _pieces[thruster] < spaceshipQuantity)
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 }
