@@ -6,7 +6,7 @@ namespace TestSpaceshipFactory;
 public class StockCalculatorTest
 {
     [Fact]
-    public void CalculateNeededStocks_ReturnsCorrectStocksForSingleSpaceship()
+    public void CalculateNeededStocks_ReturnsCorrectStocks_ForSingleSpaceship()
     {
         var spaceshipNames = new[] { "Explorer" };
         var result = StockCalculator.CalculateNeededStocks(spaceshipNames);
@@ -18,7 +18,7 @@ public class StockCalculatorTest
     }
 
     [Fact]
-    public void CalculateNeededStocks_ReturnsAggregateStocksForMultipleSpaceships()
+    public void CalculateNeededStocks_ReturnsAggregateStocks_ForMultipleSpaceships()
     {
         var spaceshipNames = new[] { "Explorer", "Speeder" };
         var result = StockCalculator.CalculateNeededStocks(spaceshipNames);
@@ -34,9 +34,9 @@ public class StockCalculatorTest
     }
 
     [Fact]
-    public void PrintNeededStocks_WritesExpectedOutputForSingleSpaceship()
+    public void PrintNeededStocks_WritesExpectedOutput_ForSingleSpaceship()
     {
-        Spaceship? spaceship = InstructionManager.ShipModels.Find(spaceship => spaceship.Name == "Explorer");
+        Spaceship? spaceship = ProductionManager.CreateSpaceship("Explorer");
         if (spaceship == null)
         {
             throw new Exception("Spaceship not found");
