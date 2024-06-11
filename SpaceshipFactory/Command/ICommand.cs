@@ -1,6 +1,6 @@
 using SpaceshipFactory.Piece;
 
-namespace SpaceshipFactory;
+namespace SpaceshipFactory.Command;
 
 public interface ICommand
 {

@@ -1,6 +1,7 @@
-﻿using SpaceshipFactory.Piece;
+﻿using SpaceshipFactory.Factory;
+using SpaceshipFactory.Piece;
 
-namespace SpaceshipFactory;
+namespace SpaceshipFactory.Command;
 
 public class InstructionManager: ICommand
 {
@@ -15,13 +16,12 @@ public class InstructionManager: ICommand
 
     public void Execute()
     {
-        if (_quantityOfSpaceship == null)
+        if (_quantityOfSpaceship != null)
         {
-            return;
-        }
-        foreach ((Spaceship model, uint quantity) in _quantityOfSpaceship)
-        {
-            PrintInstructions(model, quantity);
+            foreach ((Spaceship model, uint quantity) in _quantityOfSpaceship)
+            {
+                PrintInstructions(model, quantity);
+            }
         }
     }
 

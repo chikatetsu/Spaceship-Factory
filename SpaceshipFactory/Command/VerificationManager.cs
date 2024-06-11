@@ -1,81 +1,37 @@
-namespace SpaceshipFactory;
+namespace SpaceshipFactory.Command;
 
 public class VerificationManager: ICommand
 {
-    private string[] _args;
+    private string[]? _args;
 
     public void Execute()
     {
+        if (_args == null)
+        {
+            return;
+        }
         string command = _args[0].ToUpper();
         _args = _args[1..];
-        ICommand commandExecutor;
 
-        switch (command)
+        if (!AvailableCommand.Contains(command))
         {
-            case "STOCKS":
-                commandExecutor = new StockManager();
-                if (commandExecutor.Verify(_args))
-                {
-                    Logger.PrintResult("AVAILABLE");
-                }
-                else
-                {
-                    Logger.PrintResult("UNAVAILABLE");
-                }
-                break;
-            case "NEEDED_STOCKS":
-                commandExecutor = new StockCalculator();
-                if (commandExecutor.Verify(_args))
-                {
-                    Logger.PrintResult("AVAILABLE");
-                }
-                else
-                {
-                    Logger.PrintResult("UNAVAILABLE");
-                }
-                break;
-            case "INSTRUCTIONS":
-                commandExecutor = new InstructionManager();
-                if (commandExecutor.Verify(_args))
-                {
-                    Logger.PrintResult("AVAILABLE");
-                }
-                else
-                {
-                    Logger.PrintResult("UNAVAILABLE");
-                }
-                break;
-            case "VERIFY":
-                if (Verify(_args))
-                {
-                    Execute();
-                }
-                break;
-            case "PRODUCE":
-                commandExecutor = new ProductionManager();
-                if (commandExecutor.Verify(_args))
-                {
-                    Logger.PrintResult("AVAILABLE");
-                }
-                else
-                {
-                    Logger.PrintResult("UNAVAILABLE");
-                }
-                break;
-            case "ADD_TEMPLATE":
-                commandExecutor = new InstructionManager();
-                if (commandExecutor.Verify(_args))
-                {
-                    Logger.PrintResult("AVAILABLE");
-                }
-                else
-                {
-                    Logger.PrintResult("UNAVAILABLE");
-                }
-                break;
-            default:
-                Logger.PrintError($"`{command}` is not a known command");
-                break;
+            Logger.PrintError($"`{command}` is not a known command");
+            return;
+        }
+
+        if (command == "VERIFY" && Verify(_args))
+        {
+            Execute();
+            return;
+        }
+
+        if (AvailableCommand.Commands[command].Verify(_args))
+        {
+            Logger.PrintResult("AVAILABLE");
+        }
+        else
+        {
+            Logger.PrintResult("UNAVAILABLE");
         }
     }
 

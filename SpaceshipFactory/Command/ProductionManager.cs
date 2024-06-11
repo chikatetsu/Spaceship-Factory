@@ -1,6 +1,7 @@
+using SpaceshipFactory.Factory;
 using SpaceshipFactory.Piece;
 
-namespace SpaceshipFactory;
+namespace SpaceshipFactory.Command;
 
 public class ProductionManager: ICommand
 {
@@ -10,9 +11,12 @@ public class ProductionManager: ICommand
 
     public void Execute()
     {
-        foreach ((Spaceship model, uint quantity) in _quantityOfSpaceship)
+        if (_quantityOfSpaceship != null)
         {
-            Produce(model, quantity);
+            foreach ((Spaceship model, uint quantity) in _quantityOfSpaceship)
+            {
+                Produce(model, quantity);
+            }
         }
     }
 
@@ -42,7 +46,7 @@ public class ProductionManager: ICommand
     }
 
 
-    public static void Produce(Spaceship model, uint quantityToProduce)
+    private static void Produce(Spaceship model, uint quantityToProduce)
     {
         var stock = Stock.Instance;
         if (!stock.IsStockSufficient(model, quantityToProduce))
@@ -108,5 +112,4 @@ public class ProductionManager: ICommand
             Logger.PrintError($"Template {name} is invalid and cannot be added.");
         }
     }
-    
 }

@@ -1,6 +1,6 @@
 ﻿using SpaceshipFactory.Piece;
 
-namespace SpaceshipFactory;
+namespace SpaceshipFactory.Command;
 
 public class StockCalculator: ICommand
 {
@@ -9,11 +9,10 @@ public class StockCalculator: ICommand
 
     public void Execute()
     {
-        if (_quantityOfSpaceship == null)
+        if (_quantityOfSpaceship != null)
         {
-            return;
+            PrintNeededStocks(_quantityOfSpaceship);
         }
-        PrintNeededStocks(_quantityOfSpaceship);
     }
 
     public bool Verify(IReadOnlyList<string> args)

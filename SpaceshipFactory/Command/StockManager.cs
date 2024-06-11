@@ -1,4 +1,4 @@
-namespace SpaceshipFactory;
+namespace SpaceshipFactory.Command;
 
 public class StockManager: ICommand
 {

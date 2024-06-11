@@ -1,8 +1,10 @@
+using SpaceshipFactory.Command;
+
 namespace SpaceshipFactory;
 
-public class Parser
+public static class Parser
 {
-    public void Parse(string input)
+    public static void Parse(string input)
     {
         string[] split = FormatInput(input);
         if (split.Length == 0)
@@ -12,63 +14,25 @@ public class Parser
         }
 
         string command = split[0];
+        if (command == "")
+        {
+            return;
+        }
+        if (!AvailableCommand.Contains(command))
+        {
+            Logger.PrintError($"`{command}` is not a known command");
+            return;
+        }
         string[] args = split[1..];
         Logger.PrintDebug($"Command: {command}, Args: {string.Join(" ", args)}");
-        ICommand commandExecutor;
-
-        switch (command)
+        
+        if (AvailableCommand.Commands[command].Verify(args))
         {
-            case "STOCKS":
-                commandExecutor = new StockManager();
-                if (commandExecutor.Verify(args))
-                {
-                    commandExecutor.Execute();
-                }
-                break;
-            case "NEEDED_STOCKS":
-                commandExecutor = new StockCalculator();
-                if (commandExecutor.Verify(args))
-                {
-                    commandExecutor.Execute();
-                }
-                break;
-            case "INSTRUCTIONS":
-                commandExecutor = new InstructionManager();
-                if (commandExecutor.Verify(args))
-                {
-                    commandExecutor.Execute();
-                }
-                break;
-            case "VERIFY":
-                commandExecutor = new VerificationManager();
-                if (commandExecutor.Verify(args))
-                {
-                    commandExecutor.Execute();
-                }
-                break;
-            case "PRODUCE":
-                commandExecutor = new ProductionManager();
-                if (commandExecutor.Verify(args))
-                {
-                    commandExecutor.Execute();
-                }
-                break;
-            case "ADD_TEMPLATE":
-                commandExecutor = new TemplateManager();
-                if (commandExecutor.Verify(args))
-                {
-                    commandExecutor.Execute();
-                }
-                break;
-            case "":
-                break;
-            default:
-                Logger.PrintError($"`{command}` is not a known command");
-                break;
+            AvailableCommand.Commands[command].Execute();
         }
     }
     
-    private string[] FormatInput(string input)
+    private static string[] FormatInput(string input)
     {
         input = input.Trim().Replace("  ", " ");
         string[] split = input.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);

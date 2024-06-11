@@ -1,4 +1,5 @@
-﻿using SpaceshipFactory.Piece;
+﻿using SpaceshipFactory.Command;
+using SpaceshipFactory.Piece;
 
 namespace TestSpaceshipFactory;
 
