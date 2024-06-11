@@ -2,9 +2,45 @@ using SpaceshipFactory.Piece;
 
 namespace SpaceshipFactory;
 
-public static class ProductionManager
+public class ProductionManager: ICommand
 {
-    private static Dictionary<string, Spaceship> _customTemplates = new();
+    private static readonly Dictionary<string, Spaceship> CustomTemplates = new();
+    private Dictionary<Spaceship, uint>? _quantityOfSpaceship;
+
+
+    public void Execute()
+    {
+        foreach ((Spaceship model, uint quantity) in _quantityOfSpaceship)
+        {
+            Produce(model, quantity);
+        }
+    }
+
+    public bool Verify(IReadOnlyList<string> args)
+    {
+        if (args.Count == 0)
+        {
+            Logger.PrintError("PRODUCE command expects at least 2 argument");
+            return false;
+        }
+        if (args.Count % 2 != 0)
+        {
+            Logger.PrintError("PRODUCE command expects an even number of arguments");
+            return false;
+        }
+        for (int i = 0; i < args.Count; i += 2)
+        {
+            if (!int.TryParse(args[i], out int quantity) || quantity < 1)
+            {
+                Logger.PrintError($"`{args[i]}` is not a valid quantity");
+                return false;
+            }
+        }
+
+        _quantityOfSpaceship = ICommand.MapArgsToQuantityOfSpaceship(args);
+        return _quantityOfSpaceship != null;
+    }
+
 
     public static void Produce(Spaceship model, uint quantityToProduce)
     {
@@ -43,7 +79,7 @@ public static class ProductionManager
     
     public static Spaceship? CreateSpaceship(string type)
     {
-        if (_customTemplates.TryGetValue(type, out Spaceship? customTemplate))
+        if (CustomTemplates.TryGetValue(type, out Spaceship? customTemplate))
         {
             return new Spaceship(customTemplate.Name, new Dictionary<Piece.Piece, uint>(customTemplate.Pieces));
         }
@@ -64,7 +100,7 @@ public static class ProductionManager
         Spaceship newTemplate = new(name, pieces);
         if (newTemplate.Validate())
         {
-            _customTemplates[name] = newTemplate;
+            CustomTemplates[name] = newTemplate;
             Logger.PrintResult($"Template {name} added successfully.");
         }
         else
