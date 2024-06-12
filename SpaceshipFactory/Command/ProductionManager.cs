@@ -7,6 +7,12 @@ public class ProductionManager: ICommand
 {
     private static readonly Dictionary<string, Spaceship> CustomTemplates = new();
     private Dictionary<Spaceship, uint>? _quantityOfSpaceship;
+    private static readonly Dictionary<string, ISpaceshipFactory> Factories = new()
+    {
+        { "Explorer", new ExplorerFactory() },
+        { "Speeder", new SpeederFactory() },
+        { "Cargo", new CargoFactory() }
+    };
 
 
     public void Execute()
@@ -24,7 +30,7 @@ public class ProductionManager: ICommand
     {
         if (args.Count == 0)
         {
-            Logger.PrintError("PRODUCE command expects at least 2 argument");
+            Logger.PrintError("PRODUCE command expects at least one quantity and one spaceship");
             return false;
         }
         if (args.Count % 2 != 0)
@@ -88,15 +94,11 @@ public class ProductionManager: ICommand
             return new Spaceship(customTemplate.Name, new Dictionary<Piece.Piece, uint>(customTemplate.Pieces));
         }
 
-        ISpaceshipFactory? factory = type switch
+        if (!Factories.TryGetValue(type, out ISpaceshipFactory? factory))
         {
-            "Explorer" => new ExplorerFactory(),
-            "Speeder" => new SpeederFactory(),
-            "Cargo" => new CargoFactory(),
-            _ => null
-        };
-
-        return factory?.CreateSpaceship();
+            return null;
+        }
+        return factory.CreateSpaceship();
     }
     
     public static void AddTemplate(string name, Dictionary<Piece.Piece, uint> pieces)

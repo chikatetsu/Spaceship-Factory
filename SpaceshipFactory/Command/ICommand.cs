@@ -11,7 +11,7 @@ public interface ICommand
     {
         if (args.Count == 0)
         {
-            Logger.PrintError("This command expects at least 2 arguments");
+            Logger.PrintError("This command expects at least one quantity and one spaceship");
             return null;
         }
         if (args.Count % 2 != 0)
@@ -42,6 +42,11 @@ public interface ICommand
             {
                 spaceshipQuantities[model] += quantity;
             }
+        }
+
+        if (spaceshipQuantities.Count == 0)
+        {
+            return null;
         }
         return spaceshipQuantities;
     }

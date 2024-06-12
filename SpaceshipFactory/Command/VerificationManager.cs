@@ -19,9 +19,16 @@ public class VerificationManager: ICommand
             return;
         }
 
-        if (command == "VERIFY" && Verify(_args))
+        if (command == "VERIFY")
         {
-            Execute();
+            if (Verify(_args))
+            {
+                Execute();
+            }
+            else
+            {
+                Logger.PrintResult("UNAVAILABLE");
+            }
             return;
         }
 

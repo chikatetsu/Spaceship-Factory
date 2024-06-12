@@ -19,7 +19,7 @@ public class TemplateManager: ICommand
     {
         if (args.Count < 2)
         {
-            Logger.PrintError("Invalid ADD_TEMPLATE command arguments");
+            Logger.PrintError("ADD_TEMPLATE command expects a template name and pieces");
             return false;
         }
 

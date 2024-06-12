@@ -19,7 +19,7 @@ public class StockCalculator: ICommand
     {
         if (args.Count == 0)
         {
-            Logger.PrintError("NEEDED_STOCKS command expects at least 2 argument");
+            Logger.PrintError("NEEDED_STOCKS command expects at least one quantity and one spaceship");
             return false;
         }
         if (args.Count % 2 != 0)

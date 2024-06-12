@@ -12,12 +12,8 @@ public static class Parser
             Logger.PrintError("No command entered.");
             return;
         }
-
         string command = split[0];
-        if (command == "")
-        {
-            return;
-        }
+
         if (!AvailableCommand.Contains(command))
         {
             Logger.PrintError($"`{command}` is not a known command");

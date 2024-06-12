@@ -1,10 +1,51 @@
 ﻿using SpaceshipFactory.Command;
 using SpaceshipFactory.Piece;
 
-namespace TestSpaceshipFactory;
+namespace TestSpaceshipFactory.Command;
 
 public class StockCalculatorTest
 {
+    [Fact]
+    public void Verify_ReturnsFalse_WhenNoArgsAreProvided()
+    {
+        var command = new StockCalculator();
+        Assert.False(command.Verify(Array.Empty<string>()));
+    }
+
+    [Fact]
+    public void Verify_ReturnsFalse_WhenOneArgIsProvided()
+    {
+        var command = new StockCalculator();
+        string[] arg = { "Explorer" };
+        Assert.False(command.Verify(arg));
+    }
+
+    [Fact]
+    public void Verify_ReturnsFalse_WhenFirstArgIsNotAQuantity()
+    {
+        var command = new StockCalculator();
+        string[] args = { "any", "Explorer" };
+        Assert.False(command.Verify(args));
+    }
+
+    [Fact]
+    public void Verify_ReturnsTrue_WhenQuantityAndSpaceshipAreProvided()
+    {
+        var command = new StockCalculator();
+        string[] args = { "1", "Explorer" };
+        Assert.True(command.Verify(args));
+    }
+
+    [Fact]
+    public void Verify_ReturnsTrue_WhenMultipleQuantitiesAndSpaceshipsAreProvided()
+    {
+        var command = new StockCalculator();
+        string[] args = { "2", "Explorer", "4", "Speeder" };
+        Assert.True(command.Verify(args));
+    }
+
+
+
     [Fact]
     public void CalculateNeededStocks_ReturnsCorrectStocks_ForSingleSpaceship()
     {

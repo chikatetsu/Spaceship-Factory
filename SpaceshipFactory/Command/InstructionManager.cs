@@ -29,7 +29,7 @@ public class InstructionManager: ICommand
     {
         if (args.Count == 0)
         {
-            Logger.PrintError("INSTRUCTIONS command expects at least 2 argument");
+            Logger.PrintError("INSTRUCTIONS command expects at least one quantity and one spaceship");
             return false;
         }
         if (args.Count % 2 != 0)
