@@ -5,7 +5,7 @@ namespace SpaceshipFactory.Command;
 public class TemplateManager: ICommand
 {
     private string? _templateName;
-    private Dictionary<Piece.Piece, uint>? _pieces;
+    private List<Piece.Piece>? _pieces;
 
     public void Execute()
     {
@@ -24,7 +24,7 @@ public class TemplateManager: ICommand
         }
 
         _templateName = args[0];
-        _pieces = new Dictionary<Piece.Piece, uint>();
+        _pieces = new List<Piece.Piece>();
 
         for (int i = 1; i < args.Count; i++)
         {
@@ -35,10 +35,7 @@ public class TemplateManager: ICommand
                 return false;
             }
 
-            if (!_pieces.TryAdd(piece, 1))
-            {
-                _pieces[piece] += 1;
-            }
+            _pieces.Add(piece);
         }
 
         return true;

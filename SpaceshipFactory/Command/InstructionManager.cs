@@ -57,34 +57,88 @@ public class InstructionManager: ICommand
         {
             Logger.PrintInstruction("PRODUCING", $"{spaceship.Name}");
 
-            foreach (var piece in spaceship.Pieces)
+            if (spaceship.Hull != null)
             {
-                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"{piece.Value} {piece.Key.Name}");
+                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {spaceship.Hull.Name}");
+            }
+
+            foreach (var engine in spaceship.Engines)
+            {
+                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {engine.Name}");
+            }
+
+            foreach (var wings in spaceship.Wings)
+            {
+                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {wings.Name}");
+            }
+
+            foreach (var thruster in spaceship.Thrusters)
+            {
+                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {thruster.Name}");
             }
 
             bool firstLoop = true;
             string currentAssembly = "";
-
-            foreach (var piece in spaceship.Pieces)
+            
+            if (spaceship.Hull != null)
             {
-                for(int pieceQuantity = 0; pieceQuantity < piece.Value; pieceQuantity++)
+                currentAssembly = spaceship.Hull.Name;
+            }
+
+            foreach (var engine in spaceship.Engines)
+            {
+                switch (firstLoop)
                 {
-                    if (currentAssembly == "")
-                    {
-                        //Logger.PrintInstruction("ASSEMBLE", $"{piece.Key.Name}");
-                        currentAssembly = $"{piece.Key.Name}";
-                    }
-                    else if (firstLoop)
-                    {
-                        Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} {piece.Key.Name}");
-                        currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
+                    case true when string.IsNullOrEmpty(currentAssembly):
+                        currentAssembly = engine.Name;
+                        break;
+                    case true:
+                        Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} + {engine.Name}");
+                        currentAssembly += $", {engine.Name}";
                         firstLoop = false;
-                    }
-                    else
-                    {
-                        Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] {piece.Key.Name}");
-                        currentAssembly = $"{currentAssembly}, {piece.Key.Name}";
-                    }
+                        break;
+                    default:
+                        Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] + {engine.Name}");
+                        currentAssembly += $", {engine.Name}";
+                        break;
+                }
+            }
+
+            foreach (var wings in spaceship.Wings)
+            {
+                if (firstLoop && string.IsNullOrEmpty(currentAssembly))
+                {
+                    currentAssembly = wings.Name;
+                }
+                else if (firstLoop)
+                {
+                    Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} + {wings.Name}");
+                    currentAssembly += $", {wings.Name}";
+                    firstLoop = false;
+                }
+                else
+                {
+                    Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] + {wings.Name}");
+                    currentAssembly += $", {wings.Name}";
+                }
+            }
+
+            foreach (var thruster in spaceship.Thrusters)
+            {
+                if (firstLoop && string.IsNullOrEmpty(currentAssembly))
+                {
+                    currentAssembly = thruster.Name;
+                }
+                else if (firstLoop)
+                {
+                    Logger.PrintInstruction("ASSEMBLE", $"{currentAssembly} + {thruster.Name}");
+                    currentAssembly += $", {thruster.Name}";
+                    firstLoop = false;
+                }
+                else
+                {
+                    Logger.PrintInstruction("ASSEMBLE", $"[{currentAssembly}] + {thruster.Name}");
+                    currentAssembly += $", {thruster.Name}";
                 }
             }
 
