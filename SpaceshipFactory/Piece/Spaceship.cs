@@ -20,6 +20,8 @@ namespace SpaceshipFactory.Piece
 
         public bool AddPiece(Piece? piece)
         {
+            if (piece == null) return false;
+
             switch (piece)
             {
                 case Hull hull:
@@ -73,7 +75,7 @@ namespace SpaceshipFactory.Piece
                    Thrusters.Count >= 1 && Thrusters.Count <= 3 &&
                    (Thrusters.Count <= 2 || Engines.Count == 2);
         }
-        
+
         public Piece? GetPieceByName(string pieceName)
         {
             if (Hull != null && Hull.Name == pieceName) return Hull;
