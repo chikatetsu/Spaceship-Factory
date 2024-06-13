@@ -1,4 +1,4 @@
-﻿using SpaceshipFactory.Command;
+using SpaceshipFactory.Command;
 using SpaceshipFactory.Piece;
 
 namespace TestSpaceshipFactory.Command;
@@ -77,7 +77,10 @@ public class StockCalculatorTest
     [Fact]
     public void PrintNeededStocks_WritesExpectedOutput_ForSingleSpaceship()
     {
-        Spaceship? spaceship = ProductionManager.CreateSpaceship("Explorer");
+        Spaceship? spaceship = InstructionManager.ShipFactories
+            .Select(factory => factory.CreateSpaceship())
+            .FirstOrDefault(spaceship => spaceship.Name == "Explorer");
+        
         if (spaceship == null)
         {
             throw new Exception("Spaceship not found");

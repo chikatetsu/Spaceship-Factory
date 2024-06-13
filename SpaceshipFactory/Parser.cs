@@ -22,9 +22,14 @@ public static class Parser
         string[] args = split[1..];
         Logger.PrintDebug($"Command: {command}, Args: {string.Join(" ", args)}");
         
-        if (AvailableCommand.Commands[command].Verify(args))
+        ICommand cmd = AvailableCommand.Commands[command];
+        if (cmd is ModificationManager modManager && modManager.Verify(args))
         {
-            AvailableCommand.Commands[command].Execute();
+            modManager.Execute();
+        }
+        else if (cmd.Verify(args))
+        {
+            cmd.Execute();
         }
     }
     
@@ -55,4 +60,5 @@ public static class Parser
 
         return result;
     }
+
 }

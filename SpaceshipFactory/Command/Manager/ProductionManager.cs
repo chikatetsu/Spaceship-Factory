@@ -52,46 +52,69 @@ public class ProductionManager: ICommand
     }
 
 
-    private static void Produce(Spaceship model, uint quantityToProduce)
+    public static void Produce(Spaceship model, uint quantityToProduce)
     {
         var stock = Stock.Instance;
         if (!stock.IsStockSufficient(model, quantityToProduce))
         {
             Logger.PrintError("Unable to start production due to insufficient stock");
+            return;
         }
 
         for (var i = 0; i < quantityToProduce; i++)
         {
             Spaceship newSpaceship = new(model.Name);
 
-            foreach ((Piece.Piece piece, uint pieceQuantity) in model.Pieces)
+            foreach (var piece in model.Engines)
             {
-                if (!stock.Remove(piece, pieceQuantity))
+                if (!newSpaceship.AddPiece(piece))
                 {
-                    foreach (var pieceQty in newSpaceship.Pieces)
-                    {
-                        stock.Add(pieceQty.Key, pieceQty.Value);
-                    }
-                    Logger.PrintError($"Insufficient stock. Produced {i} {model.Name}");
+                    Logger.PrintError($"Failed to add {piece.GetType().Name}");
                     return;
                 }
-
-                if (!newSpaceship.Pieces.TryAdd(piece, pieceQuantity))
+            }
+            foreach (var piece in model.Wings)
+            {
+                if (!newSpaceship.AddPiece(piece))
                 {
-                    newSpaceship.Pieces[piece] += pieceQuantity;
+                    Logger.PrintError($"Failed to add {piece.GetType().Name}");
+                    return;
                 }
+            }
+            foreach (var piece in model.Thrusters)
+            {
+                if (!newSpaceship.AddPiece(piece))
+                {
+                    Logger.PrintError($"Failed to add {piece.GetType().Name}");
+                    return;
+                }
+            }
+            if (model.Hull != null)
+            {
+                newSpaceship.AddPiece(model.Hull);
+            }
+
+            if (!newSpaceship.IsValid())
+            {
+                Logger.PrintError($"Invalid spaceship configuration for {newSpaceship.Name}");
+                return;
             }
 
             stock.Add(newSpaceship, 1);
         }
         Logger.PrintResult("STOCK_UPDATED");
     }
-    
+        
     public static Spaceship? CreateSpaceship(string type)
     {
         if (CustomTemplates.TryGetValue(type, out Spaceship? customTemplate))
         {
-            return new Spaceship(customTemplate.Name, new Dictionary<Piece.Piece, uint>(customTemplate.Pieces));
+            Spaceship newSpaceship = new(customTemplate.Name);
+            foreach (var piece in customTemplate.Engines) newSpaceship.AddPiece(piece);
+            foreach (var piece in customTemplate.Wings) newSpaceship.AddPiece(piece);
+            foreach (var piece in customTemplate.Thrusters) newSpaceship.AddPiece(piece);
+            if (customTemplate.Hull != null) newSpaceship.AddPiece(customTemplate.Hull);
+            return newSpaceship;
         }
 
         if (!Factories.TryGetValue(type, out ISpaceshipFactory? factory))
@@ -101,10 +124,18 @@ public class ProductionManager: ICommand
         return factory.CreateSpaceship();
     }
     
-    public static void AddTemplate(string name, Dictionary<Piece.Piece, uint> pieces)
+    public static void AddTemplate(string name, List<Piece.Piece?> pieces)
     {
-        Spaceship newTemplate = new(name, pieces);
-        if (newTemplate.Validate())
+        Spaceship newTemplate = new(name);
+        foreach (var piece in pieces)
+        {
+            if (!newTemplate.AddPiece(piece))
+            {
+                Logger.PrintError($"Failed to add {piece.GetType().Name} to template {name}");
+                return;
+            }
+        }
+        if (newTemplate.IsValid())
         {
             CustomTemplates[name] = newTemplate;
             Logger.PrintResult($"Template {name} added successfully.");
@@ -113,5 +144,15 @@ public class ProductionManager: ICommand
         {
             Logger.PrintError($"Template {name} is invalid and cannot be added.");
         }
+    }
+
+    public static Spaceship? GetSpaceship(string name)
+    {
+        if (CustomTemplates.TryGetValue(name, out Spaceship? customTemplate))
+        {
+            return customTemplate;
+        }
+
+        return Factories.TryGetValue(name, out ISpaceshipFactory? factory) ? factory.CreateSpaceship() : null;
     }
 }

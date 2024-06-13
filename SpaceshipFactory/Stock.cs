@@ -7,12 +7,12 @@ public class Stock
     private static Stock? _instance;
     private static readonly object Lock = new();
     private readonly Dictionary<Spaceship, uint> _spaceships;
-    private readonly Dictionary<Piece.Piece, uint> _pieces;
+    private readonly Dictionary<Piece.Piece?, uint> _pieces;
 
     private Stock()
     {
         _spaceships = new Dictionary<Spaceship, uint>();
-        _pieces = new Dictionary<Piece.Piece, uint>
+        _pieces = new Dictionary<Piece.Piece?, uint>
         {
             { new Engine("Engine_EE1"), 5 },
             { new Engine("Engine_ES1"), 9 },
@@ -59,7 +59,7 @@ public class Stock
         return true;
     }
     
-    public bool Add(Piece.Piece piece, uint quantity)
+    public bool Add(Piece.Piece? piece, uint quantity)
     {
         if (quantity == 0)
         {
@@ -72,7 +72,7 @@ public class Stock
         return true;
     }
     
-    public bool Remove(Piece.Piece piece, uint quantity)
+    public bool Remove(Piece.Piece? piece, uint quantity)
     {
         if (quantity == 0)
         {
@@ -105,7 +105,7 @@ public class Stock
             }
             str += $"{quantity} {spaceship}\n";
         }
-        foreach ((Piece.Piece piece, uint quantity) in _pieces)
+        foreach ((Piece.Piece? piece, uint quantity) in _pieces)
         {
             if (quantity == 0)
             {
@@ -118,17 +118,38 @@ public class Stock
 
     public bool IsStockSufficient(Spaceship model, uint spaceshipQuantity)
     {
-        foreach ((Piece.Piece? piece, uint pieceQuantity) in model.Pieces)
+        if (model.Hull != null)
         {
-            if (!_pieces.ContainsKey(piece))
-            {
-                return false;
-            }
-            if (_pieces[piece] < pieceQuantity * spaceshipQuantity)
+            if (!_pieces.ContainsKey(model.Hull) || _pieces[model.Hull] < spaceshipQuantity)
             {
                 return false;
             }
         }
+
+        foreach (var engine in model.Engines)
+        {
+            if (!_pieces.ContainsKey(engine) || _pieces[engine] < spaceshipQuantity)
+            {
+                return false;
+            }
+        }
+
+        foreach (var wings in model.Wings)
+        {
+            if (!_pieces.ContainsKey(wings) || _pieces[wings] < spaceshipQuantity)
+            {
+                return false;
+            }
+        }
+
+        foreach (var thruster in model.Thrusters)
+        {
+            if (!_pieces.ContainsKey(thruster) || _pieces[thruster] < spaceshipQuantity)
+            {
+                return false;
+            }
+        }
+
         return true;
     }
 }
