@@ -9,11 +9,8 @@ public class StockManager: ICommand
 
     public bool Verify(IReadOnlyList<string> args)
     {
-        if (args.Count != 0)
-        {
-            Logger.PrintError("STOCKS command does not expect any arguments");
-            return false;
-        }
-        return true;
+        if (args.Count == 0) return true;
+        Logger.PrintError("STOCKS command does not expect any arguments");
+        return false;
     }
 }

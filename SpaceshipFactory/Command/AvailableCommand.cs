@@ -9,7 +9,9 @@ public static class AvailableCommand
         { "INSTRUCTIONS", new InstructionManager() },
         { "VERIFY", new VerificationManager() },
         { "PRODUCE", new ProductionManager() },
-        { "ADD_TEMPLATE", new TemplateManager() }
+        { "ADD_TEMPLATE", new TemplateManager() },
+        { "MODIFY", new ModificationManager() } 
+
     };
 
     public static bool Contains(string commandName)

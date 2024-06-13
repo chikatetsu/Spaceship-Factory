@@ -124,7 +124,7 @@ public class ProductionManager: ICommand
         return factory.CreateSpaceship();
     }
     
-    public static void AddTemplate(string name, List<Piece.Piece> pieces)
+    public static void AddTemplate(string name, List<Piece.Piece?> pieces)
     {
         Spaceship newTemplate = new(name);
         foreach (var piece in pieces)
@@ -144,5 +144,15 @@ public class ProductionManager: ICommand
         {
             Logger.PrintError($"Template {name} is invalid and cannot be added.");
         }
+    }
+
+    public static Spaceship? GetSpaceship(string name)
+    {
+        if (CustomTemplates.TryGetValue(name, out Spaceship? customTemplate))
+        {
+            return customTemplate;
+        }
+
+        return Factories.TryGetValue(name, out ISpaceshipFactory? factory) ? factory.CreateSpaceship() : null;
     }
 }
