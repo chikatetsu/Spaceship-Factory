@@ -5,7 +5,7 @@ namespace SpaceshipFactory;
 public class Stock
 {
     private static Stock? _instance;
-    private static readonly object _lock = new object();
+    private static readonly object Lock = new();
     private readonly Dictionary<Spaceship, uint> _spaceships;
     private readonly Dictionary<Piece.Piece, uint> _pieces;
 
@@ -33,7 +33,7 @@ public class Stock
     {
         get
         {
-            lock (_lock)
+            lock (Lock)
             {
                 if (_instance == null)
                 {
@@ -74,13 +74,13 @@ public class Stock
     
     public bool Remove(Piece.Piece piece, uint quantity)
     {
+        if (quantity == 0)
+        {
+            return false;
+        }
         if (!_pieces.ContainsKey(piece))
         {
             Logger.PrintError($"Piece {piece} is not in stock.");
-            return false;
-        }
-        if (quantity == 0)
-        {
             return false;
         }
         if (_pieces[piece] < quantity)

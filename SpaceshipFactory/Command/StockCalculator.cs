@@ -1,9 +1,46 @@
 ﻿using SpaceshipFactory.Piece;
 
-namespace SpaceshipFactory;
+namespace SpaceshipFactory.Command;
 
-public static class StockCalculator
+public class StockCalculator: ICommand
 {
+    private Dictionary<Spaceship, uint>? _quantityOfSpaceship;
+
+
+    public void Execute()
+    {
+        if (_quantityOfSpaceship != null)
+        {
+            PrintNeededStocks(_quantityOfSpaceship);
+        }
+    }
+
+    public bool Verify(IReadOnlyList<string> args)
+    {
+        if (args.Count == 0)
+        {
+            Logger.PrintError("NEEDED_STOCKS command expects at least one quantity and one spaceship");
+            return false;
+        }
+        if (args.Count % 2 != 0)
+        {
+            Logger.PrintError("NEEDED_STOCKS command expects an even number of arguments");
+            return false;
+        }
+        for (int i = 0; i < args.Count; i += 2)
+        {
+            if (!int.TryParse(args[i], out int quantity) || quantity < 1)
+            {
+                Logger.PrintError($"`{args[i]}` is not a valid quantity");
+                return false;
+            }
+        }
+
+        _quantityOfSpaceship = ICommand.MapArgsToQuantityOfSpaceship(args);
+        return _quantityOfSpaceship != null;
+    }
+
+
     public static Dictionary<string, uint> CalculateNeededStocks(string[] spaceshipNames)
     {
         var totalNeededParts = new Dictionary<string, uint>();
