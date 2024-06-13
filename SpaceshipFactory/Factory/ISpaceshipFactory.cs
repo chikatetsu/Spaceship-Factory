@@ -1,9 +1,8 @@
 ﻿using SpaceshipFactory.Piece;
 
-namespace SpaceshipFactory
+namespace SpaceshipFactory.Factory;
+
+public interface ISpaceshipFactory
 {
-    public interface ISpaceshipFactory
-    {
-        Spaceship CreateSpaceship();
-    }
+    Spaceship CreateSpaceship();
 }

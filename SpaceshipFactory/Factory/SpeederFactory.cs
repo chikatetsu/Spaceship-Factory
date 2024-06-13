@@ -1,5 +1,6 @@
-﻿using SpaceshipFactory;
 using SpaceshipFactory.Piece;
+
+namespace SpaceshipFactory.Factory;
 
 public class SpeederFactory : ISpaceshipFactory
 {

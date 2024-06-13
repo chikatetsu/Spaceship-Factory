@@ -1,11 +1,53 @@
-﻿using SpaceshipFactory.Piece;
+using SpaceshipFactory.Command;
+using SpaceshipFactory.Piece;
 
-namespace TestSpaceshipFactory;
+namespace TestSpaceshipFactory.Command;
 
 public class StockCalculatorTest
 {
     [Fact]
-    public void CalculateNeededStocks_ReturnsCorrectStocksForSingleSpaceship()
+    public void Verify_ReturnsFalse_WhenNoArgsAreProvided()
+    {
+        var command = new StockCalculator();
+        Assert.False(command.Verify(Array.Empty<string>()));
+    }
+
+    [Fact]
+    public void Verify_ReturnsFalse_WhenOneArgIsProvided()
+    {
+        var command = new StockCalculator();
+        string[] arg = { "Explorer" };
+        Assert.False(command.Verify(arg));
+    }
+
+    [Fact]
+    public void Verify_ReturnsFalse_WhenFirstArgIsNotAQuantity()
+    {
+        var command = new StockCalculator();
+        string[] args = { "any", "Explorer" };
+        Assert.False(command.Verify(args));
+    }
+
+    [Fact]
+    public void Verify_ReturnsTrue_WhenQuantityAndSpaceshipAreProvided()
+    {
+        var command = new StockCalculator();
+        string[] args = { "1", "Explorer" };
+        Assert.True(command.Verify(args));
+    }
+
+    [Fact]
+    public void Verify_ReturnsTrue_WhenMultipleQuantitiesAndSpaceshipsAreProvided()
+    {
+        var command = new StockCalculator();
+        string[] args = { "2", "Explorer", "4", "Speeder" };
+        Assert.True(command.Verify(args));
+    }
+
+
+
+    [Fact]
+    public void CalculateNeededStocks_ReturnsCorrectStocks_ForSingleSpaceship()
     {
         var spaceshipNames = new[] { "Explorer" };
         var result = StockCalculator.CalculateNeededStocks(spaceshipNames);
@@ -17,7 +59,7 @@ public class StockCalculatorTest
     }
 
     [Fact]
-    public void CalculateNeededStocks_ReturnsAggregateStocksForMultipleSpaceships()
+    public void CalculateNeededStocks_ReturnsAggregateStocks_ForMultipleSpaceships()
     {
         var spaceshipNames = new[] { "Explorer", "Speeder" };
         var result = StockCalculator.CalculateNeededStocks(spaceshipNames);
@@ -33,7 +75,7 @@ public class StockCalculatorTest
     }
 
     [Fact]
-    public void PrintNeededStocks_WritesExpectedOutputForSingleSpaceship()
+    public void PrintNeededStocks_WritesExpectedOutput_ForSingleSpaceship()
     {
         Spaceship? spaceship = InstructionManager.ShipFactories
             .Select(factory => factory.CreateSpaceship())
