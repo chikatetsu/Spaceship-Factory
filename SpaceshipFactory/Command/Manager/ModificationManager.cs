@@ -27,19 +27,19 @@
         {
             foreach (var arg in args)
             {
-                if (arg.Contains("WITH"))
-                {
-                    var parsedArgs = ParseModificationArgs(args);
-                    var cmd = new AddPiecesCommand();
-                    cmd.SetArgs(parsedArgs.Item1, parsedArgs.Item2);
-                    _modificationCommands.Add(cmd);
-                    return true;
-                }
-
                 if (arg.Contains("WITHOUT"))
                 {
                     var parsedArgs = ParseModificationArgs(args);
                     var cmd = new RemovePiecesCommand();
+                    cmd.SetArgs(parsedArgs.Item1, parsedArgs.Item2);
+                    _modificationCommands.Add(cmd);
+                    return true;
+                }
+                
+                if (arg.Contains("WITH"))
+                {
+                    var parsedArgs = ParseModificationArgs(args);
+                    var cmd = new AddPiecesCommand();
                     cmd.SetArgs(parsedArgs.Item1, parsedArgs.Item2);
                     _modificationCommands.Add(cmd);
                     return true;
@@ -58,21 +58,16 @@
             return false;
         }
 
+
         private (string, Dictionary<string, int>) ParseModificationArgs(IReadOnlyList<string> args)
         {
             var spaceshipName = args[0];
             var modifications = new Dictionary<string, int>();
 
-            for (var i = 1; i < args.Count; i++)
+            for (var i = 2; i < args.Count; i += 2)
             {
-                if (args[i] == "WITH" || args[i] == "WITHOUT" || args[i] == "REPLACE")
-                {
-                    continue;
-                }
-
                 if (!int.TryParse(args[i], out int quantity)) continue;
                 modifications[args[i + 1]] = quantity;
-                i++;
             }
 
             return (spaceshipName, modifications);

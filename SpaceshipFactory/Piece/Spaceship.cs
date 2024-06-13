@@ -25,22 +25,39 @@ namespace SpaceshipFactory.Piece
             switch (piece)
             {
                 case Hull hull:
-                    if (Hull != null) return false;
+                    if (Hull != null)
+                    {
+                        Logger.PrintError("A spaceship can only have one hull.");
+                        return false;
+                    }
                     Hull = hull;
                     break;
                 case Engine engine:
-                    if (Engines.Count >= 2) return false;
+                    if (Engines.Count >= 2)
+                    {
+                        Logger.PrintError("A spaceship can only have up to two engines.");
+                        return false;
+                    }
                     Engines.Add(engine);
                     break;
                 case Wings wings:
-                    if (Wings.Count >= 2) return false;
+                    if (Wings.Count >= 2)
+                    {
+                        Logger.PrintError("A spaceship can only have up to two wings.");
+                        return false;
+                    }
                     Wings.Add(wings);
                     break;
                 case Thruster thruster:
-                    if (Thrusters.Count >= 3) return false;
+                    if (Thrusters.Count >= 3)
+                    {
+                        Logger.PrintError("A spaceship can only have up to three thrusters.");
+                        return false;
+                    }
                     Thrusters.Add(thruster);
                     break;
                 default:
+                    Logger.PrintError($"Unknown piece type: {piece.GetType().Name}");
                     return false;
             }
             return true;

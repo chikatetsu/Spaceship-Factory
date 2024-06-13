@@ -43,14 +43,21 @@ namespace SpaceshipFactory.Command
                 }
             }
 
-            Logger.PrintResult($"Successfully removed specified pieces from spaceship '{_spaceshipName}'.");
+            if (spaceship.IsValid())
+            {
+                Logger.PrintResult($"Successfully removed specified pieces from spaceship '{_spaceshipName}'.");
+            }
+            else
+            {
+                Logger.PrintError($"Invalid configuration for spaceship '{_spaceshipName}' after removing pieces.");
+            }
         }
 
         public bool Verify(IReadOnlyList<string> args)
         {
             if (args.Count < 3)
             {
-                Logger.PrintError("REMOVE command expects at least a spaceship name and one piece to remove.");
+                Logger.PrintError("WITHOUT command expects at least a spaceship name and one piece to remove.");
                 return false;
             }
 

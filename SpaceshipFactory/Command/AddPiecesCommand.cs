@@ -50,7 +50,7 @@ namespace SpaceshipFactory.Command
         {
             if (args.Count < 3)
             {
-                Logger.PrintError("ADD command expects at least a spaceship name and one piece to add.");
+                Logger.PrintError("WITH command expects at least a spaceship name and one piece to add.");
                 return false;
             }
 
