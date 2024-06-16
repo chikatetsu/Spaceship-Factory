@@ -147,10 +147,12 @@ public interface ICommand
                 return null;
             }
 
-            if (addedType == "P")
+            if (addedType == "P" || addedType == "A")
             {
 
-                Piece.Piece newPiece = PieceFactory.CreatePiece(modelName);
+                Piece.Piece newPiece = null;
+                if(addedType == "P") newPiece = PieceFactory.CreatePiece(modelName);
+                if (addedType == "A") newPiece = PieceFactory.CreatePiece(modelName, true);
                 if (newPiece == null)
                 {
                     Logger.PrintError($"Piece '{modelName}' not recognized.");
@@ -173,4 +175,5 @@ public interface ICommand
         return pieceQuantities;
     }
 
+    
 }
