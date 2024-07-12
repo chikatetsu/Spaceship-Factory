@@ -10,8 +10,8 @@ public static class AvailableCommand
         { "VERIFY", new VerificationManager() },
         { "PRODUCE", new ProductionManager() },
         { "ADD_TEMPLATE", new TemplateManager() },
-        { "MODIFY", new ModificationManager() } 
-
+        { "MODIFY", new ModificationManager() },
+        { "RECEIVE", new AddStockManager() }
     };
 
     public static bool Contains(string commandName)
