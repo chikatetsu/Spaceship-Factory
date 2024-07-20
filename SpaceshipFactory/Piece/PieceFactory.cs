@@ -21,5 +21,11 @@ public static class PieceFactory
             _ => null
         };
     }
+
+    public static Piece? CreatePiece(string name, Boolean isAssembly)
+    {
+        if (!isAssembly) return null;
+        return new Assembly(name);
+    }
 }
 
