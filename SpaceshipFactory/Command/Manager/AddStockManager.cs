@@ -1,13 +1,11 @@
 using SpaceshipFactory.Piece;
 
-namespace SpaceshipFactory.Command;
+namespace SpaceshipFactory.Command.Manager;
 
 public class AddStockManager: ICommand
 {
-
     private Dictionary<Piece.Piece, AddedStockInfo>? _quantityOfPiece;
     private Dictionary<Spaceship, AddedStockInfo>? _quantityOfSpaceship;
-
 
     public void Execute()
     {
@@ -20,7 +18,6 @@ public class AddStockManager: ICommand
                 stock.Add(model, addedStockInfo.Quantity);
             }
         }
-
 
         if (_quantityOfPiece != null)
         {
@@ -57,6 +54,6 @@ public class AddStockManager: ICommand
 
         _quantityOfSpaceship = ICommand.MapArgsToQuantityOfAddedSpaceshipToStock(args);
         _quantityOfPiece = ICommand.MapArgsToQuantityOfAddedPieceToStock(args);
-        return (_quantityOfSpaceship != null) && (_quantityOfPiece != null);
+        return (_quantityOfSpaceship != null) || (_quantityOfPiece != null);
     }
 }
