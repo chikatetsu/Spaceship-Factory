@@ -1,7 +1,7 @@
 using SpaceshipFactory.Factory;
 using SpaceshipFactory.Piece;
 
-namespace SpaceshipFactory.Command;
+namespace SpaceshipFactory.Command.Manager;
 
 public class ProductionManager: ICommand
 {

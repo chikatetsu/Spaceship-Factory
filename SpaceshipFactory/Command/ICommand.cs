@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SpaceshipFactory.Command.Manager;
 using SpaceshipFactory.Piece;
 
 namespace SpaceshipFactory.Command;
@@ -68,7 +69,6 @@ public interface ICommand
         var spaceshipQuantities =  new Dictionary<Spaceship, AddedStockInfo>();
         for (int i = 0; i < args.Count; i += 3)
         {
-
             string addedType = args[i];
             string modelName = args[i + 2];
 
@@ -78,9 +78,6 @@ public interface ICommand
                 return null;
             }
 
-            
-
-
             if (!uint.TryParse(args[i + 1], out uint quantity) || quantity < 1)
             {
                 Logger.PrintError($"`{args[i + 1]}` is not a valid quantity");
@@ -89,7 +86,6 @@ public interface ICommand
 
             if (addedType == "S")
             {
-
                 Spaceship? model = ProductionManager.CreateSpaceship(modelName);
                 if (model == null)
                 {
@@ -102,9 +98,6 @@ public interface ICommand
                     spaceshipQuantities[model].Quantity += quantity;
                 }
             }
-
-
-
         }
 
         if (spaceshipQuantities.Count == 0)
@@ -130,16 +123,15 @@ public interface ICommand
         var pieceQuantities = new Dictionary<Piece.Piece, AddedStockInfo>();
         for (int i = 0; i < args.Count; i += 3)
         {
-
             string addedType = args[i];
             string modelName = args[i + 2];
 
             if (addedType != "S" && addedType != "P" && addedType != "A")
             {
-                Logger.PrintError($"`{args[i]}` is not a valid type, must either be, P for piece, A for assembly or S for spaceship");
+                Logger.PrintError(
+                    $"`{args[i]}` is not a valid type, must either be, P for piece, A for assembly or S for spaceship");
                 return null;
             }
-
 
             if (!uint.TryParse(args[i + 1], out uint quantity) || quantity < 1)
             {
@@ -150,8 +142,8 @@ public interface ICommand
             if (addedType == "P" || addedType == "A")
             {
 
-                Piece.Piece newPiece = null;
-                if(addedType == "P") newPiece = PieceFactory.CreatePiece(modelName);
+                Piece.Piece? newPiece = null;
+                if (addedType == "P") newPiece = PieceFactory.CreatePiece(modelName);
                 if (addedType == "A") newPiece = PieceFactory.CreatePiece(modelName, true);
                 if (newPiece == null)
                 {
@@ -164,8 +156,6 @@ public interface ICommand
                     pieceQuantities[newPiece].Quantity += quantity;
                 }
             }
-
-
         }
 
         if (pieceQuantities.Count == 0)
@@ -174,6 +164,4 @@ public interface ICommand
         }
         return pieceQuantities;
     }
-
-    
 }

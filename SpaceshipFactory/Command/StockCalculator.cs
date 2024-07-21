@@ -1,6 +1,7 @@
 using SpaceshipFactory.Piece;
 using System.Collections.Generic;
 using System.Linq;
+using SpaceshipFactory.Command.Manager;
 
 namespace SpaceshipFactory.Command;
 

@@ -1,3 +1,5 @@
+using SpaceshipFactory.Command.Manager;
+
 namespace SpaceshipFactory.Command;
 
 public static class AvailableCommand
