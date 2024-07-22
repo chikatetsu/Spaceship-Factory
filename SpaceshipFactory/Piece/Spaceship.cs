@@ -1,14 +1,12 @@
-using System.Collections.Generic;
-
 namespace SpaceshipFactory.Piece
 {
     public class Spaceship
     {
         public readonly string Name;
         public Hull? Hull { get; private set; }
-        public List<Engine?> Engines { get; private set; }
-        public List<Wings?> Wings { get; private set; }
-        public List<Thruster?> Thrusters { get; private set; }
+        public List<Engine?> Engines { get; }
+        public List<Wings?> Wings { get; }
+        public List<Thruster?> Thrusters { get; }
 
         public Spaceship(string name)
         {

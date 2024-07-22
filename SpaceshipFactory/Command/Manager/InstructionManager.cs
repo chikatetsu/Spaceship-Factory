@@ -62,19 +62,25 @@ public class InstructionManager: ICommand
                 Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {spaceship.Hull.Name}");
             }
 
-            foreach (var engine in spaceship.Engines)
+            var enginesQuantities = spaceship.Engines.GroupBy(obj => obj)
+                .Select(g => new { Engine = g.Key, Quantite = g.Count() });
+            foreach (var engine in enginesQuantities)
             {
-                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {engine.Name}");
+                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"{engine.Quantite} {engine.Engine}");
             }
 
-            foreach (var wings in spaceship.Wings)
+            var wingsQuantities = spaceship.Wings.GroupBy(obj => obj)
+                .Select(g => new { Wing = g.Key, Quantite = g.Count() });
+            foreach (var wings in wingsQuantities)
             {
-                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {wings.Name}");
+                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"{wings.Quantite} {wings.Wing}");
             }
 
-            foreach (var thruster in spaceship.Thrusters)
+            var thursterQuantities = spaceship.Thrusters.GroupBy(obj => obj)
+                .Select(g => new { Thurster = g.Key, Quantite = g.Count() });
+            foreach (var thruster in thursterQuantities)
             {
-                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"1 {thruster.Name}");
+                Logger.PrintInstruction("GET_OUT_OF_STOCK", $"{thruster.Quantite} {thruster.Thurster}");
             }
 
             bool firstLoop = true;
