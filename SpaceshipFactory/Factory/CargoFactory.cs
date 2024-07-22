@@ -10,6 +10,7 @@ public class CargoFactory : ISpaceshipFactory
         spaceship.AddPiece(new Hull("Hull_HC1"));
         spaceship.AddPiece(new Engine("Engine_EC1"));
         spaceship.AddPiece(new Wings("Wings_WC1"));
+        spaceship.AddPiece(new Wings("Wings_WC1"));
         spaceship.AddPiece(new Thruster("Thruster_TC1"));
         return spaceship;
     }

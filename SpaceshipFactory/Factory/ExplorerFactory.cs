@@ -10,6 +10,7 @@ public class ExplorerFactory : ISpaceshipFactory
         spaceship.AddPiece(new Hull("Hull_HE1"));
         spaceship.AddPiece(new Engine("Engine_EE1"));
         spaceship.AddPiece(new Wings("Wings_WE1"));
+        spaceship.AddPiece(new Wings("Wings_WE1"));
         spaceship.AddPiece(new Thruster("Thruster_TE1"));
         return spaceship;
     }
